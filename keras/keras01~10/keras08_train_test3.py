@@ -1,44 +1,96 @@
+# test2의 한계를 극복.
+
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
-from sklearn.model_selection import train_test_split
 
-# 1. 데이터
-x = np.array([1,2,3,4,5,6,7,8,9,10])
+#1. data
+x = np.array([1,2,3,4,5,6,7,8,9,10,])
+#y = np.array([10,9,8,7,6,5,4,3,2,1,])
 y = np.array([1,2,3,4,5,6,7,8,9,10])
 
-# [검색] train과 test를 섞어서 7:3으로 찾을 수 있는 방법
+from sklearn.model_selection import train_test_split
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=123, shuffle=True)
 
-print(x_train)
-print(x_test)
-print(y_train)
-print(y_test)
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, 
+    test_size=0.3,
+    random_state=51,
+    shuffle=True)
+#test_size 로 적어도 되고, train_size 로 적어도됨 가능
+#random_state 랜덤시드표(군대암호표) 처럼 1이면 123 789 이렇게 뽑아라 라는 표가있음(고정되있음)
+# 데이터값이 바뀌면 훈련시키면 모델을 잘만들었는지 못만들었는지 알 수 없음
+#랜덤이 되더라도 데이터값이 고정되어야됨 고정되지 않으면 모델의 성능을 알수가없음.
+# 그래서 나온게 랜덤시드다.
+print(x_train, x_test)
+print(y_train, y_test)
 
-# 2. 모델구성
+
+
+# [검색] train 과 test를 섞어서 7:3으로 찾을 수 있는 방법!
+# 힌트 사이킷런
+
+# test_size : 전체데이터에서 테스트 데이터 세트의 크기를 얼마나 샘플링할 것인가
+# ex) 0.3이면 train 70%, test 30%
+# random_state 호출할때마다 동일한 학습/테스터용 데이터 세트를 생성하기 위해 주어지는 난수 값
+# shuffle = true 셔플로 할것이다. 보통은 디폴트값으로 주석처리해도됨 ,false로 하면 섞이지 않게됨 
+
+#2. modeling
+
 model = Sequential()
-model.add(Dense(10, input_dim=1))
-model.add(Dense(100))
-model.add(Dense(1000))
-model.add(Dense(100))
-model.add(Dense(10))
+model.add(Dense(10, input_dim = 1 ))
+model.add(Dense(3))
+model.add(Dense(3))
+model.add(Dense(3))
+model.add(Dense(3))
+model.add(Dense(3))
+model.add(Dense(3))
+model.add(Dense(3))
+model.add(Dense(3))
 model.add(Dense(1))
 
-# 3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=1000, batch_size=2)
+#3. compile, train
 
-# 4. 평가, 예측
-lose = model.evaluate(x_test, y_test)
-print("lose : ", lose)
+model.compile(loss = 'mse' , optimizer = 'adam') #adam은 최적화
+model.fit(x_train, y_train, epochs = 300, batch_size =2) #one F5에 4번돔(train 1~7이기때문에 2 2 2 1)
 
-result = model.predict([11])
-print("[11]의 예측값 : ", result)
+# -> 위에 test를 적어놔도 train해도 실행가능
 
-"""
-lose :  3.07901843127692e-13
-[11]의 예측값 :  [[10.999999]]
+#4. evaluate, predict
 
-([10,100,1000,100,10,1], mse, adam, 1000, 2)
-"""
+loss = model.evaluate(x_test,y_test)
+print('loss : ', loss)
+
+
+result = model.predict([10])
+print('[10]의 예측값은 :', result)
+
+'''
+1/1 [==============================] - 0s 93ms/step
+[10]의 예측값은 : [[10.]]
+1/1 [==============================] - 0s 81ms/step
+[10]의 예측값은 : [[9.999999]] batch_size =1 ,epochs =2700, 'mse'
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

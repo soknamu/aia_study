@@ -1,55 +1,33 @@
 # [과제]
 
 # 3가지 원핫인코딩 방식을 비교할 것
-import numpy as np
+
+#1. pandas의 get_dummies
+
+
 import pandas as pd
-from sklearn.datasets import load_iris
-from keras.utils import to_categorical
+y=pd.get_dummies(y)
+print(y.shape)
+
+#판다스는 get_dummies 를 통해서 된다.
+
+#2. keras의 to_categorical
+ 
+from tensorflow.keras.utils import to_categorical #tensorflow 빼도 가능.
+y = to_categorical(y)
+print(y.shape) #(178, 3)
+
+# 텐서플로의 단점은 라벨값이 1부터 시작되면 텐서플로는 0부터 인식하기 때문에 sklearn이랑 pandas와 
+#  1차이 난다. 그래서 y = np.delete(y, 0, axis=1) 라벨값을 없애주는 식을 쓴다면 sklearn이랑 판다스처럼
+# 라벨값이 같아진다.
+
+#3. sklearn 의 OneHotEncoder
+
 from sklearn.preprocessing import OneHotEncoder
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense
-datasets = load_iris()
-x = datasets.data
-y = datasets.target
-print(y)
-# 1. pandas의 get_dummies
-#  get_dummies 를 사용하면 type이 dataframe으로 바뀌는데, 다시 numpy로 바꿔줘야한다.
+ohe = OneHotEncoder()
+y = y.reshape(-1,1)
+y = ohe.fit_transform(y).toarray()
+print(y.shape)
 
-print(type(y))
 
-y = pd.get_dummies(y)
-print(y)
-print(type(y))
-
-y = np.array(y)
-print(y)
-print(type(y))
-"""
-# 2. keras의 to_categorical
-
-print(type(y))
-y = to_categorical(y)          # type 그대로
-print(type(y))
-
-# label 값으로 0이 생김
-
-# 3. sklearn의 OneHotEncoder
-encoder = OneHotEncoder()
-y_2d = y.reshape(-1, 1)
-print(y_2d)
-
-print(y_2d.shape)
-y = encoder.fit_transform(y_2d).toarray()
-print(y)
-
-# 미세한 차이를 정리하시오
-"""
-
-# scaler = MinMaxScaler()
-
-# scaler = StandardScaler()
-
-# scaler = MaxAbsScaler()
-
-# scaler = RobustScaler()
-# 4가지 전부 정리해서 보내기 일요일
+# 미세한 차이를 정리하시오!!!

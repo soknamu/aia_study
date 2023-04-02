@@ -1,0 +1,70 @@
+2023/03/06
+
+1)path : 장소 불러오기
+① .(점) : 현재파일
+② / : 이전파일
+2) pandas : 파이썬에서 읽지못하는 파일들을 읽을 수 있게 해주는 명령어
+3) _read : 파일을 읽어주기
+4)index_ : 인덱스 항목을 제거해주는 명령어 EX)index_col= 0이면 맨 앞에있는 행이 날라감
+5).info() : 결집지 데이터 확인
+6) .describe : 평균, 표준편차 등을 보여줌
+7) type() : 파일이 어떤 종류인지 확인 
+8) .isnull : 결측치
+9) .sum : 합
+10) dropna() : 열에있는 결측치 제거
+10-1) drop[' ' ] : 대괄호 안에 있는 리스트를 삭제
+11) axis = 0 이면 행, axis = 1이면 열 (보통 drop이랑 자주 쓰임)
+12) verbose = 0이면 훈련과정 아예 생략
+            =1 이면 디폴트
+            =2 이면 진행바 x
+            그외는 똑같음
+13)to_ 파일저장
+14)def :함수, return : 함수의 결과값, sqrt : 루트
+
+2023/03/07
+
+
+15)validation : train에서 검증값을 구하기 위해 분리시켜서 정확성을 올려준다.
+
+2023/03/08
+
+
+###############데이터 분리 표##################
+                x값        y값
+train            o          o
+test             o          o
+validation      o          o
+predict         o          x
+##############################################
+16) hist :모델fit에서 loss값과 val_loss에서 값을 반환함(return) 그것을 반환하는 것을 hist라고함.
+17)plt.title('') 표제목
+plt.xlabel('')  x축 글씨
+plt.ylabel('') y축 글씨
+plt.legend() 범례 표시 : 오른쪽 위에 뜨는 조그만 상자. 
+plt.grid 그래프에 오목판처럼 축이 생김
+18)train_test_split :트레인과 테스트를 분리시키는 함수.
+
+과제) 클래스와 함수의 차이를 비교해보기 그리고 느낀점. 이면지 반페이지
+최적의 loss 는 최적의 weight(웨이트)
+
+19)EarlyStopping 앞글자가 대문자면 클래스, 소문자면 함수. (ex)train_test_split는 함수.
+20)naming rule : C: 뜻이틀릴때마다 언더바를 사용
+                java:새로운 뜻이 있을 때마다 대문자를 사용 
+                -^-^- 그래서 이렇게 낙타등처럼 생긴게 카멜케이스(camel case)
+https://snowdeer.github.io/machine-learning/2018/01/11/keras-use-history-function/
+
+# pip uninstall scikit_learn   -> 사이킷런 삭제
+# pip install scikit-learn==1.2.0 -> 사이킷런 설치
+# cmd 에서
+
+3월10일 
+스케일러
+가장 중요한거 : x_train만 정규화를 시킨다.
+순서 첫번째 트레인과 테스트를 먼저 나눈다.
+
+두번째 비율에 맞춰서 나머지(test, predict) 변환
+train 과 test가 완벽하게 겹치면 오히려 안좋음.
+
+x_test 범위가 어긋나면 오히려 좋다.
+
+결론: 스케일은  train과 테스트를 분리하기후에 해야됨.

@@ -1,81 +1,94 @@
 from sklearn.datasets import fetch_covtype
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.models import Sequential, Model
 from tensorflow.python.keras.layers import Dense, Input, Dropout
 import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-from keras.utils import to_categorical
-datasets = fetch_covtype()
+from tensorflow.python.keras.callbacks import EarlyStopping
+import tensorflow as tf
+from sklearn.preprocessing import MaxAbsScaler
+#1. 데이터
+
+datasets =fetch_covtype()
+
 x = datasets.data
 y = datasets.target
 
-print(x)
-print(y)
-print(x.shape, y.shape)     # (581012, 54), (581012,)
-print(type(x), type(y))
+#print(x.shape, y.shape) #(581012, 54) (581012,)
 
-print(np.unique(y))     # [1 2 3 4 5 6 7]
-y = pd.get_dummies(y)
-print(type(y))
-y = np.array(y)
-print(type(y))
-print(y.shape)          # [581012, 7]
+#print('y의 라벨값 : ', np.unique(y)) #[1 2 3 4 5 6 7]
 
-# y = to_categorical(y)     # (0이 추가됨)
-# print(y.shape)      # (581012, 8) 이 되므로 첫열을 하나 제거하거나, 다른거 쓰거나
+#1-1. tensorflow hot encorder
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, stratify=y)
-print(y_train)
-print(np.unique(y_train))
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+from keras.utils import to_categorical #tensorflow 빼도 가능.
+y = to_categorical(y)
+y = np.delete(y, 0, axis=1)
+print(y.shape) #(581012, 8)
+
+# #2. sklearn
+# from sklearn.preprocessing import OneHotEncoder
+# ohe = OneHotEncoder()
+# y = y.reshape(-1,1)
+# y = ohe.fit_transform(y).toarray()
+# print(y.shape) # (581012,7)
+# print(type(y)) #<class 'numpy.ndarray'>
+
+# #3.pandas get_dummies
+# import pandas as pd
+# y=pd.get_dummies(y)
+# print(y.shape)
+x_train, x_test, y_train, y_test = train_test_split(x,y, 
+    train_size= 0.7, shuffle= True, random_state= 310, stratify= y)
 
 scaler = MaxAbsScaler()
-
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
+x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
+print(np.min(x_test), np.max(x_test))
 
-# 2. 모델구성
-# model = Sequential()
-# model.add(Dense(64, input_dim=54))
-# model.add(Dense(128))
-# model.add(Dense(32))
-# model.add(Dense(7, activation='softmax'))
+#2.모델구성
 
 input1 = Input(shape=(54,))
-dense1 = Dense(64, activation='relu')(input1)
-drop1 = Dropout(0.2)(dense1)
-dense2 = Dense(64, activation='relu')(drop1)
-dense3 = Dense(32, activation='relu')(dense2)
-output1 = Dense(7, activation='softmax')(dense3)
-model = Model(inputs=input1, outputs=output1)
+dense1 = Dense(50,activation = 'relu')(input1)
+drop1 = Dropout(0.25)(dense1)
+dense2 = Dense(40,activation='relu')(drop1)
+dense3 = Dense(40,activation = 'relu')(dense2)
+dense4 = Dense(40,activation='relu')(dense3)
+output1 = Dense(7,activation = 'softmax')(dense4)
+model = Model(inputs = input1, outputs = output1)
 
-# 3. 컴파일, 훈련
-model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['acc'])
-model.fit(x_train, y_train, epochs=100, batch_size=1000, validation_split=0.2, verbose=1)
+#3.컴파일
 
-# 4. 평가, 예측
-result = model.evaluate(x_test, y_test)
-print("result : ", result)
+es = EarlyStopping(monitor= 'acc', patience= 50,verbose= 1, restore_best_weights= True, mode = 'max')
 
-y_predict = np.argmax(model.predict(x_test), axis=1)
-y_test = np.argmax(y_test, axis=1)
+model.compile(loss = 'categorical_crossentropy', optimizer ='adam',
+              metrics =['acc'])
+model.fit(x_train, y_train, epochs =1000, 
+          batch_size= 3000, validation_split = 0.2, verbose =1, callbacks =[es])
 
-acc = accuracy_score(y_test, y_predict)
-print('acc : ', acc)
 
-# acc :  0.6778960895906003
 
-# (MinMaxScaler)
-# acc :  0.7232364145401138
+# accuracy_score를 사용해서 스코어를 빼세요.
+###############################################
+#4. 평가, 예측
 
-# (StandardScaler)
-# acc :  0.7237757022214063
+results = model.evaluate(x_test,y_test)
+print(results)
+print('loss : ', results[0])
+print('acc : ', results[1])
 
-# (MaxAbsSclaer)
-# acc :  0.725215715072517
+y_predict = model.predict(x_test)
 
-# (RobustScaler)
-# acc :  0.7243322012116762
+#print(y_predict.shape)
+y_test_acc = np.argmax(y_test, axis = 1) #각행에 있는 열(1)끼리 비교(ytest열끼리비교)
+y_predict = np.argmax(y_predict, axis = 1) #-1해도 상관없음.
 
+#print(y_predict.shape)
+#print(y_test_acc.shape)
+
+acc = accuracy_score(y_test_acc, y_predict)
+print('accuary_score : ', acc)
+
+# [0.30956757068634033, 0.8753499388694763]
+# loss :  0.30956757068634033
+# acc :  0.8753499388694763
+# accuary_score :  0.8753499632825409

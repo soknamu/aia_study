@@ -1,111 +1,124 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import r2_score
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense
-import matplotlib.pyplot as plt
-from tensorflow.python.keras.callbacks import EarlyStopping
 import numpy as np
+from tensorflow.python.keras.models import Sequential
+from tensorflow.python.keras.layers import Dense, LeakyReLU
 from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.model_selection import train_test_split
+import pandas as pd
+#얼리스탑 (새로운 개념)
+from tensorflow.python.keras.callbacks import EarlyStopping
+from sklearn.preprocessing import MinMaxScaler,StandardScaler,MaxAbsScaler,RobustScaler
+#1. 데이터
 
-
-# 1.데이터
-# 1.1 경로, 가져오기
 path = './_data/kaggle_bike/'
 path_save = './_save/kaggle_bike/'
 
-train_csv = pd.read_csv(path + 'train.csv', index_col=0)
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+train_csv = pd.read_csv(path + 'train.csv', index_col = 0)
+test_csv = pd.read_csv(path + 'test.csv', index_col = 0)
 
-# 1.2 확인사항 5가지
-print(train_csv.shape, test_csv.shape)
-print(train_csv.columns, test_csv.columns)
-print(train_csv.info(), test_csv.info())
-print(train_csv.describe(), test_csv.describe())
-print(type(train_csv), type(test_csv))
+# print(train_csv.shape) #(10886, 11)
+# print(test_csv.shape) #(6493, 8)
 
-# 1.3 결측지 제거
-train_csv = train_csv.dropna()
+#print(train_csv.isnull().sum())
 
-# 1.4 x, y 분리
-x = train_csv.drop(['casual', 'registered', 'count'], axis=1)
+x = train_csv.drop(['count','casual','registered'], axis = 1)
+
 y = train_csv['count']
 
-# 1.5 train, test 분리
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=123, shuffle=True)
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+# print(x.shape) #(10886, 8)
+# print(y.shape) #(6493, 0)
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,
+shuffle= True, train_size= 0.7, random_state=1004)
 
 scaler = RobustScaler()
-
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
+x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
-test_csv = scaler.transform(test_csv)
-# 2. 모델구성
+test_csv = scaler.transform(test_csv) ##test_csv도 스케일러 해줘야됨.
+print(np.min(x_test), np.max(x_test))
+
+# print(x_train.shape,x_test.shape) #(7620, 8) (3266, 8)
+# print(y_train.shape,y_test.shape) #(7620,) (3266,)
+
+#2. 모델링
+
 model = Sequential()
-model.add(Dense(32, input_dim=8, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(32, activation='relu'))
-model.add(Dense(8, activation='relu'))
-model.add(Dense(1))
+model.add(Dense(150,input_dim =8,activation= 'relu'))
+model.add(Dense(105,activation ='relu'))
+model.add(Dense(90, activation= 'relu'))
+model.add(Dense(45,activation ='relu'))
+model.add(Dense(30, activation= 'relu'))
+model.add(Dense(15, activation= 'relu'))
+model.add(Dense(1, activation= 'linear'))
+#model.summary() 76291
 
-# 3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, restore_best_weights=True, patience=100)
-hist = model.fit(x_train, y_train, epochs=100, batch_size=10, validation_split=0.2, verbose=1, callbacks=[es])
+#3.컴파일 훈련
 
-# 4. 평가, 예측
-loss = model.evaluate(x_test, y_test)
+es = EarlyStopping(monitor = 'val_loss', patience= 300, mode= 'min', verbose= 1, restore_best_weights=True)
+
+model.compile(loss = 'mse', optimizer ='adam')
+hist = model.fit(x_train,y_train, epochs = 5500, batch_size= 400, verbose =1,validation_split= 0.2,
+          callbacks=[es])
+
+
+print("===================발로스===================")
+print(hist.history['val_loss'])
+print("===================발로스====================")
+
+#4.평가, 훈련
+
+loss = model.evaluate(x_test,y_test)
 print('loss : ', loss)
 
 y_predict = model.predict(x_test)
-r2 = r2_score(y_test, y_predict)
-print('r2 스코어 :', r2)
+r2 = r2_score(y_test,y_predict)
+print('r2 score :', r2)
 
-def RMSE(y_test, y_predict):
-    return np.sqrt(mean_squared_error(y_test, y_predict))
-rmse = RMSE(y_test, y_predict)
-print("RMSE : ", rmse)
+def RMSE(y_test,y_predict):
+    return np.sqrt(mean_squared_error(y_test,y_predict))
+rmse = RMSE(y_test,y_predict)
+print('RMSE는 :',rmse )
 
-# 4.1 내보내기
 y_submit = model.predict(test_csv)
-submission= pd.read_csv(path + 'sampleSubmission.csv', index_col=0)
-submission['count'] = np.clip(y_submit, 0, None)
 
-submission.to_csv(path_save + 'submit_0313_0700.csv')
 
-plt.rcParams['font.family'] = 'Malgun Gothic'
-plt.figure(figsize=(9,6))
-plt.plot(hist.history['loss'], marker='.', c='red', label='로스')
-plt.plot(hist.history['val_loss'], marker='.', c='blue', label='발_로스')
-plt.title('케글바이크')
-plt.xlabel('epochs')
-plt.ylabel('loss, val_loss')
-plt.grid()
-plt.legend()
-plt.show()
 
-# loss :  22537.240234375
-# r2 스코어 : 0.3062697116866663
-# RMSE :  150.12405472335942
 
-# (MinMaxScaler) 
-# loss :  21739.61328125
-# r2 스코어 : 0.33082160498660074
-# RMSE :  147.44359560578232
 
-# (StandardScaler) 
-# loss :  22303.5390625
-# r2 스코어 : 0.3134631591768615
-# RMSE :  149.34369123864897
+submission = pd.read_csv(path + 'sampleSubmission.csv', index_col = 0)
+submission['count'] = y_submit
+submission.to_csv(path_save + 'submit_0313_1210 .csv')
 
-# (MaxAbsSclaer) 
-# loss :  22578.4609375
-# r2 스코어 : 0.3050008816524633
-# RMSE :  150.26128016571516
 
-# (RobustScaler)
-# loss :  21702.431640625
-# r2 스코어 : 0.33196616970960546
-# RMSE :  147.3174476588654
+# from matplotlib import pyplot as plt
+# plt.subplot(1,2,1)
+# plt.plot(hist.history['val_loss'])
+# plt.subplot(1,2,2)
+# plt.plot(hist.history['val_acc'])
+# plt.title('val_acc')
+# plt.show()
+
+
+# 103/103 [==============================] - 0s 786us/step - loss: 57221.8672
+# loss :  57221.8671875
+# r2 score : -0.7728213145520941
+# RMSE는 : 239.21092524704696 Minmaxscaler 이건 test_csv를 안해줌.
+
+# loss :  22044.576171875
+# r2 score : 0.31702517193547375
+# RMSE는 : 148.47416014139552 Minmaxscaler
+
+# loss :  21568.001953125
+# r2 score : 0.331789993728392
+# RMSE는 : 146.8605045702671 Stand
+
+# loss :  21883.423828125
+# r2 score : 0.3220178981123005
+# RMSE는 : 147.93047205228902 Abs
+
+
+# loss :  21401.533203125
+# r2 score : 0.3369474803034884
+# RMSE는 : 146.29264545931474 RobustScaler
+
+
+

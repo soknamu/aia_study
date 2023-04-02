@@ -36,6 +36,8 @@ dense3 = Dense(10)(dense2)
 output1 = Dense(1)(dense3) #인풋레이어는 dense1으로 dense1은 dense2로 output에서 반복...
 model = Model(inputs = input1, outputs = output1) #인풋의 시작은 인풋1, 아웃풋의 끝은 아우풋1 
 
+#model.save('./_save/keras26_1_save_model.h5')
+model.save_weights('./_save/keras26_5_save_weightsl.h5')
 
 #3. 컴파일 훈련
 
@@ -43,7 +45,9 @@ model.compile(loss = 'mse', optimizer = 'adam')
 model.fit(x_train, y_train)
 
 
-model.save('./_save/keras26_3_save_model.h5')
+# model.save('./_save/keras26_3_save_model.h5')
+model.save_weights('./_save/keras26_5_save_weights2.h5')
+
 '''
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)

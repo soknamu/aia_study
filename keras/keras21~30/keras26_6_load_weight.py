@@ -1,8 +1,6 @@
-#함수와 sequential와 차이점
-
 from sklearn.datasets import load_boston
 from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.models import Sequential, Model #함수를 부를 때는 Model사용.
+from tensorflow.python.keras.models import Sequential, Model, load_model #함수를 부를 때는 Model사용.
 from tensorflow.python.keras.layers import Dense, Input #인풋레이어도 명시.
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler, StandardScaler 
@@ -23,29 +21,36 @@ scaler = StandardScaler() #표준분포가 모여 있으면 stand
 # scaler = MaxAbsScaler() 절대값.
 # scaler = RobustScaler()
 
-x_train = scaler.fit_transform(x_train) #ㅌ-train에 맞춰서 바뀌어짐.
+x_train = scaler.fit_transform(x_train) #x_train에 맞춰서 바뀌어짐.
 x_test = scaler.transform(x_test) #x트레인의 변환범위에 맞춰야되서 변환해준다.
 
 print(np.min(x_test),np.max(x_test)) #0.0 ~ 1.0
 
-#2. 모델(함수)
 input1 = Input(shape=(13,)) #인풋명시, 그리고 이걸 인풋1이라고 이름을 지정.
 dense1 = Dense(30)(input1) #Dense 모델을 구성하고, 마지막은 시작은 어디에서 시작해서 끝은 어디로 끝내는지 연결해줌.
 dense2 = Dense(20)(dense1)
 dense3 = Dense(10)(dense2) 
 output1 = Dense(1)(dense3) #인풋레이어는 dense1으로 dense1은 dense2로 output에서 반복...
-model = Model(inputs = input1, outputs = output1) #인풋의 시작은 인풋1, 아웃풋의 끝은 아우풋1 
+model = Model(inputs = input1, outputs = output1)
+###############################################################
+#model = load_model('./_save/keras26_3_save_model.h5') 
+# model.load_weights('./_save/keras26_5_save_weightsl.h5')
+# 얘는 초기 랜덤값의 웨이트만 저장되어있음.
+##############################################
+model.summary()
+model.load_weights('./_save/keras26_5_save_weights2.h5')
+#얘는 훈련, 컴파일이 다 저장되어있음.
 
 
 #3. 컴파일 훈련
 
 model.compile(loss = 'mse', optimizer = 'adam')
-model.fit(x_train, y_train)
+model.fit(x_train, y_train, epochs = 100)
 
 
-model.save('./_save/keras26_3_save_model.h5')
-'''
 #4. 평가 예측
 loss = model.evaluate(x_test, y_test)
 print('loss : ',loss)
-'''
+
+
+

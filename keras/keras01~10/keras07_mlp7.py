@@ -1,48 +1,54 @@
-# x의 열은 1개
-# y의 열은 3개
+# input 1 output 3
 
-import numpy as np  
+import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 
-# 1. 데이터
-x = np.array([range(10)])    # (1, 10)
-x = x.T   # (10, 1)
+
+x = np.array([range(10)]) #3행 10열 range ex) 10 -> 0~9 영부터 카운트
+
+x = x.T #10행 1열
 
 y = np.array([[1,2,3,4,5,6,7,8,9,10],
-              [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9],
-              [9,8,7,6,5,4,3,2,1,0]]) # (3, 10)
+               [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9 ],
+               [9,8,7,6,5,4,3,2,1,0]]) # 3행 10열
 
-y = y.T     #(10, 3)
+y = y.T   #10행 3열
 
-# [실습]
-# 예측 : [[9, 30, 210]] 
+#예측 [[9,30,210]] -> [[10,1.9,0]]
 
-#2.  모델구성
+#모델링
+
 model = Sequential()
-model.add(Dense(10, input_dim=1))
-model.add(Dense(100))
-model.add(Dense(1000))
-model.add(Dense(100))
-model.add(Dense(10))
+model.add(Dense(5, input_dim =1))
+model.add(Dense(3))  # alt + shift + ↓ 누르면 복사 아랫열 복사
+model.add(Dense(6))
+model.add(Dense(8))
+model.add(Dense(11))
+model.add(Dense(15))
+model.add(Dense(20))
+model.add(Dense(17))
+model.add(Dense(15))
+model.add(Dense(12))
+model.add(Dense(9))
+model.add(Dense(7))
+model.add(Dense(5))
 model.add(Dense(3))
 
-#3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
-model.fit(x, y, epochs=1000, batch_size=1)
+model.compile(loss = 'mae', optimizer = 'adam')
+model.fit(x,y, epochs = 9999, batch_size = 6)
 
-#4. 평가, 예측
-loss = model.evaluate(x, y)
-print("loss : ", loss)
+loss = model.evaluate(x,y)
+print('loss : ', loss)
 
 result = model.predict([[9]])
-print("[[9]]의 예측값 : ", result)
+print('[9]의 예측값은 : ', result)
 
+#예측 : [[9]] -> 예상 Y값 [[10,1.9,0]]
 
-"""
-loss :  1.313675080175103e-12
-1/1 [==============================] - 0s 84ms/step
-[[9]]의 예측값 :  [[1.0000001e+01 1.9000002e+00 2.0712614e-06]]
+# 1/1 [==============================] - 0s 109ms/step
+# [9]의 예측값은 :  [[10.169735    1.8726721  -0.38903695]]
 
-([10,100,1000,100,10,3], mse, adam, 1000, 1)
-"""
+# 1/1 [==============================] - 0s 108ms/step
+# [9]의 예측값은 :  [[10.016806    1.9134089   0.02088538]]
+

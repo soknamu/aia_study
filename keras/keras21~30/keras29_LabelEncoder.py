@@ -1,109 +1,122 @@
-# 데이콘 따릉이 문제풀이
+
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.python.keras.models import Sequential, Model
+from tensorflow.python.keras.layers import Dense, Input, Dropout
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score, mean_squared_error
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler,StandardScaler, MaxAbsScaler
+from tensorflow.python.keras.callbacks import EarlyStopping
+#1. 데이터 
 
-# 1. 데이터
-path = './_data/wine/' # . 은 현재 폴더(STUDY)를 의미함
+path = './_data/dacon_wine/'
+path_save = './_save/dacon_wine/'
 
-# train_csv = pd.read_csv('./_data/ddarung/train.csv')
-train_csv = pd.read_csv(path + 'train.csv', index_col=0)
+train_csv = pd.read_csv(path + 'train.csv', index_col= 0)
+test_csv = pd.read_csv(path + 'test.csv', index_col= 0)
 
 print(train_csv)
-print(train_csv.shape)      # (5497, 10)
-
-
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+print(train_csv.shape) #(5497, 13)
 
 print(test_csv)
-print(test_csv.shape)      # (1000, 12)
+print(test_csv.shape) #(1000, 12)
 
-from sklearn.preprocessing import LabelEncoder, RobustScaler
+from sklearn.preprocessing import LabelEncoder #전처리 preprocessing
 le = LabelEncoder()
-le.fit(train_csv['type'])
+le.fit(train_csv['type']) #화이트와 레드를 0과 1로 인정하겠다.
 aaa = le.transform(train_csv['type'])
-print(aaa)
-print(type(aaa))        # <class 'numpy.ndarray'>
-print(aaa.shape)
-# print(np.unique(aaa, return_counts=True))
+print(aaa) #[1 0 1 ... 1 1 1]
+print(type(aaa)) #<class 'numpy.ndarray'>
+print(aaa.shape) #(5497,)
+#print(np.unique(aaa, return_counts =True)) #(array([0, 1]), array([1338, 4159], dtype=int64))
 
-train_csv['type'] = aaa
+train_csv['type'] =aaa
 print(train_csv)
 test_csv['type'] = le.transform(test_csv['type'])
 
-print(le.transform(['red', 'white']))
-print(le.transform(['white', 'red']))
+print(le.transform(['red', 'white'])) #[0 1]
+print(le.transform(['white', 'red'])) #[1 0]
 
+# 정의, 핏 ,트랜스폼.
+###################################################################################
 '''
-# ================================================================================================= #
+print(train_csv.shape) #(1459, 10)
+print(test_csv.shape) #(715, 9)
 
-print(train_csv.columns)
-
-# Index(['hour', 'hour_bef_temperature', 'hour_bef_precipitation',
-#       'hour_bef_windspeed', 'hour_bef_humidity', 'hour_bef_visibility',
-#       'hour_bef_ozone', 'hour_bef_pm10', 'hour_bef_pm2.5', 'count'],
-#       dtype='object')
-
-print(train_csv.info())
-
-#  0   hour                    1459 non-null   int64
-#  1   hour_bef_temperature    1457 non-null   float64
-#  2   hour_bef_precipitation  1457 non-null   float64
-#  3   hour_bef_windspeed      1450 non-null   float64
-#  4   hour_bef_humidity       1457 non-null   float64
-#  5   hour_bef_visibility     1457 non-null   float64
-#  6   hour_bef_ozone          1383 non-null   float64
-#  7   hour_bef_pm10           1369 non-null   float64
-#  8   hour_bef_pm2.5          1342 non-null   float64
-#  9   count                   1459 non-null   float64
-
-
-print(train_csv.describe())
-
-print(type(train_csv))      # <class 'pandas.core.frame.DataFrame'>
-
-######################### 결측치 처리 #############################
-# 결측치 처리 1. 제거
 print(train_csv.isnull().sum())
-train_csv = train_csv.dropna()      ### 결측지 제거 ###
-print(train_csv.isnull().sum())
-print(train_csv.info())
-print(train_csv.shape)      #(1328, 10)
-print(type(train_csv))      # <class 'pandas.core.frame.DataFrame'>
 
-######################### train_csv데이터에서 x와 y를 분리 ##############################
-x = train_csv.drop(['count'], axis=1)
-print(x)
+train_csv = train_csv.dropna()
+
+print(train_csv.isnull().sum())
+
+print(train_csv.shape) #(1328, 10)
+
+
+x = train_csv.drop(['count'], axis= 1)
 
 y = train_csv['count']
-print(y)
-######################### train_csv데이터에서 x와 y를 분리 ##############################
 
+x_train, x_test, y_train, y_test = train_test_split(x,y, train_size= 0.7, shuffle= True, random_state= 942)
 
-x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_size=0.7, random_state=1)
+scaler = MinMaxScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+test_csv = scaler.transform(test_csv) ##test_csv도 스케일러 해줘야됨.
+print(np.min(x_test), np.max(x_test))
 
-# print(x_train.shape, x_test.shape)      #(1021, 9), (438, 9) -> (929, 9), (399, 9)
-# print(y_train.shape, y_test.shape)      #(1021,), (438,) -> (929,), (399,)
+# print(x_train.shape, x_test.shape) #(929, 9) (399, 9)
+# print(y_train.shape, y_test.shape) #(929,) (399,)
 
-# 2. 모델구성
-model = Sequential()
-model.add(Dense(32, input_dim=9))
-model.add(Dense(64))
-model.add(Dense(64))
-model.add(Dense(32))
-model.add(Dense(8))
-model.add(Dense(1))
+#2 모델구성
 
-# 3. 컴파일, 훈련
-model.compile(loss='mse', optimizer='adam')
-model.fit(x_train, y_train, epochs=100, batch_size=32, verbose=0)
+input1 =Input(shape=(9,))
+dense1 = Dense(150, activation= 'relu')(input1)
+dense2 = Dense(135)(dense1)
+drop1 = Dropout(0.25)(dense2)
+dense2 = Dense(120,activation='relu')(drop1)
+dense3 = Dense(105)(dense2)
+drop2 = Dropout(0.25)(dense3)
+dense4 = Dense(90,activation='relu')(drop2)
+dense5 = Dense(75)(dense4)
+dense5 = Dense(60, activation='relu')(dense4)
+drop3 = Dropout(0.25)(dense5)
+dense6 = Dense(45)(drop3)
+dense7 = Dense(30, activation='relu')(dense6) 
+dense8 = Dense(13,)(dense6)
+drop4 = Dropout(0.25)(dense8) 
+output1 = Dense(1,activation= 'linear')(drop4)
+model = Model(inputs = input1, outputs = output1)
+#3. 컴파일
 
-# 4. 평가, 예측
+es = EarlyStopping(monitor = 'val_loss', patience =300, mode = 'auto',
+               verbose=1, restore_best_weights=True)
+
+model.compile(loss = 'mse', optimizer= 'adam')
+hist = model.fit(x_train, y_train, epochs = 15000, batch_size =22, 
+                verbose = 1, validation_split= 0.2,
+                callbacks= [es]
+                )
+
+# print("===================발로스===================")
+# print(hist.history['val_loss'])
+# print("===================발로스====================")p
+
+#4 평가
+
 loss = model.evaluate(x_test, y_test)
-print("loss : ", loss)
-    
+print('loss : ', loss)
 
+y_predict = model.predict(x_test)
+r2 = r2_score(y_predict, y_test)
+print('r2 score :', r2)
+def RMSE(y_predict, y_test) :
+  return np.sqrt(mean_squared_error(y_predict, y_test))
+rmse = RMSE(y_predict, y_test)
+print('RMSE : ', rmse)
+
+#print(test_csv.isnull().sum())
+y_submit = model.predict(test_csv)
+submission = pd.read_csv(path + 'submission.csv', index_col = 0)
+submission['count'] = y_submit
+submission.to_csv(path_save + 'submit_0314_1305 .csv')
 '''

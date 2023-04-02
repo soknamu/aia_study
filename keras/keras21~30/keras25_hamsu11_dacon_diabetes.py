@@ -1,98 +1,108 @@
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from tensorflow.python.keras.models import Sequential, Model
-from tensorflow.python.keras.layers import Dense, Input
 import numpy as np
-
+from tensorflow.python.keras.models import Sequential,Model 
+from tensorflow.python.keras.layers import Dense,LeakyReLU,Input
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from tensorflow.python.keras.callbacks import EarlyStopping
+import pandas as pd
+from sklearn.preprocessing import MinMaxScaler,StandardScaler,RobustScaler,MaxAbsScaler
 # 1. 데이터
-# 1.1 경로, 가져오기
+
 path = './_data/dacon_diabetes/'
 path_save = './_save/dacon_diabetes/'
 
-train_csv = pd.read_csv(path + 'train.csv', index_col=0)
-test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+train_csv = pd.read_csv(path + 'train.csv', index_col = 0)
+test_csv = pd.read_csv(path + 'test.csv', index_col = 0)
 
-# 1.2 확인사항 5가지
-# print(train_csv.shape, test_csv.shape)      # (652, 9), (116, 8)
-# print(train_csv.columns, test_csv.columns)
-# print(train_csv.info(), test_csv.info())
-# print(train_csv.describe(), test_csv.describe())
-# print(type(train_csv), type(test_csv))
+#print(train_csv.shape) #(652, 9)
+#print(test_csv.shape) #(116, 8)
 
-# 1.3 결측지 제거
-train_csv = train_csv.dropna()      # 결측지 원래 없음
-# print(train_csv.isnull().sum())
-
-# 1.4 x, y 분리
-x = train_csv.drop(['Outcome'], axis=1)
+#print(train_csv.isnull().sum()) # 결측치 x
+x = train_csv.drop(['Outcome'],axis =1)
 y = train_csv['Outcome']
 
-# 1.5 train, test 분리
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, random_state=777)
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
+#print(x.shape) #(652, 8)
+#print(y.shape) #(652,)
 
-scaler = MinMaxScaler()
+x_train, x_test, y_train, y_test = train_test_split(x, y, 
+        train_size= 0.7, shuffle= True, random_state= 942, stratify=y) 
 
-scaler.fit(x_train)
-x_train = scaler.transform(x_train)
-x_test = scaler.transform(x_test)
-test_csv = scaler.transform(test_csv)
 
-# 2. 모델구성
-# model = Sequential()
-# model.add(Dense(32, input_dim=8, activation='relu'))
-# model.add(Dense(64, activation='relu'))
-# model.add(Dense(128, activation='relu'))
-# model.add(Dense(32, activation='relu'))
-# model.add(Dense(16, activation='relu'))
-# model.add(Dense(1, activation='sigmoid'))
+# # 스케일러 4가지
+scaler = MinMaxScaler() #많이 퍼저있는 것
+# scaler = StandardScaler() #표준분포가 모여 있으면 stand
+# # scaler = MaxAbsScaler() 절대값.
+# # scaler = RobustScaler()
 
-input1 = Input(shape=(9,))
-dense1 = Dense(32, activation='relu')(input1)
-dense2 = Dense(64, activation='relu')(dense1)
-dense3 = Dense(128, activation='relu')(dense2)
-dense4 = Dense(32, activation='relu')(dense3)
-dense5 = Dense(16, activation='relu')(dense4)
-output1 = Dense(1, activation='sigmoid')(dense5)
-model = Model(inputs=input1, outputs=output1)
+x_tr = scaler.fit_transform(x_train) #ㅌ-train에 맞춰서 바뀌어짐.
+x_test = scaler.transform(x_test) #x트레인의 변환범위에 맞춰야되서 변환해준다.
+test_csv = scaler.transform(test_csv) ##test_csv도 스케일러 해줘야됨.
+# print(np.min(x_test),np.max(x_test))
 
-# 3. 컴파일, 훈련
-model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['acc'])
-from tensorflow.python.keras.callbacks import EarlyStopping
-es = EarlyStopping(monitor = 'val_loss', patience=100, verbose=1, mode='min', restore_best_weights=True)
-model.fit(x_train, y_train, epochs=1000, batch_size=10, validation_split=0.2, verbose=0, callbacks=[es])
+#print(x_train.shape, y_train.shape)
+#print(x_test.shape, y_test.shape)
 
-# 4. 평가, 예측
-result = model.evaluate(x_test, y_test)
-print('result : ', result)
+
+#2.모델구성
+
+input1 =Input(shape=(8,))
+dense1 = Dense(150, activation= LeakyReLU(0.95))(input1)
+dense2 = Dense(135,activation= LeakyReLU(0.95))(dense1)
+dense3 = Dense(60, activation= LeakyReLU(0.95))(dense2)
+dense4 = Dense(60, activation= LeakyReLU(1))(dense3)
+dense5 = Dense(45, activation= LeakyReLU(0.95))(dense4)
+dense6 = Dense(45, activation= LeakyReLU(0.95))(dense5)
+dense7 = Dense(30, activation= LeakyReLU(1))(dense6)
+dense8 = Dense(15, activation= LeakyReLU(0.95))(dense7)
+dense9 = Dense(15, activation= LeakyReLU(0.95))(dense8) 
+dense10 = Dense(15, activation= LeakyReLU(1))(dense9)    
+dense11 = Dense(15, activation= LeakyReLU(1))(dense10) 
+dense12 = Dense(15, activation= LeakyReLU(0.95))(dense11) 
+output1 = Dense(1,activation= 'sigmoid')(dense12)
+model = Model(inputs = input1, outputs = output1)
+model.summary()
+
+#1.마지막에 시그모이드 준다.
+#2.'binary_crossentropy' 를 넣어준다.
+
+#3. 컴파일
+
+es = EarlyStopping(monitor= 'val_acc', restore_best_weights= True, 
+                     mode= 'max', patience= 200)
+
+model.compile(loss = 'binary_crossentropy', optimizer = 'adam', #새로운 코드 'binary_crossentropy'
+              metrics=['acc','mse']) #두개이상은 list       #새로운 코드metrics=['accuracy','mse']
+hist = model.fit(x_train, y_train, epochs =1550,
+                 batch_size =18, verbose =1, 
+                 validation_split= 0.2,
+                 callbacks =[es]
+                 )
+
+#4. 평가, 예측
+results = model.evaluate(x_test,y_test)
+print('results :', results)
 
 y_predict = np.round(model.predict(x_test))
-from sklearn.metrics import accuracy_score
+
+#print(y_predict.shape)
+
+#print(y_predict.shape)
+#print(y_test_acc.shape)
+
 acc = accuracy_score(y_test, y_predict)
-print('acc : ', acc)
-    
-# 4.1 내보내기
-submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
+print('accuary_score : ', acc)
+
+#파일저장.
 y_submit = np.round(model.predict(test_csv))
+submission = pd.read_csv(path + 'sample_submission.csv', index_col = 0)
 submission['Outcome'] = y_submit
+submission.to_csv(path_save + 'submit_acc_0314_0945 .csv')
 
-submission.to_csv(path_save + 'submit_0309_1240.csv')
-
-# result :  [0.5815463066101074, 0.6989796161651611]
-# acc :  0.6989795918367347
-
-# (MinMaxScaler) 
-# result :  [0.5394765734672546, 0.7295918464660645]
-# acc :  0.7295918367346939
-
-# (StandardScaler) 
-# result :  [0.48839113116264343, 0.7244898080825806]
-# acc :  0.7244897959183674
-
-# (MaxAbsSclaer) 
-# result :  [0.5303924083709717, 0.75]
-# acc :  0.75
-
-# (RobustScaler)
-# result :  [0.4808119535446167, 0.7193877696990967]
-# acc :  0.7193877551020408
+from matplotlib import pyplot as plt
+plt.subplot(1,2,1)
+plt.plot(hist.history['val_loss'])
+plt.title('binary_crossentropy')
+plt.subplot(1,2,2)
+plt.plot(hist.history['val_acc'])
+plt.title('val_acc')
+plt.show()
