@@ -1,2 +1,0 @@
-X : train, test, validation, predict
-Y : train, test, validation 

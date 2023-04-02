@@ -1,0 +1,81 @@
+시계열 데이터. 시계열 데이터는 시계열 데이터는 y값이 없다. 그래서 데이터를 x데이터를 훈련시키고 y의 값을 예측하는 것.
+1. DNN
+입력 통상적으로 2차원
+출력 통상적으로 2차원
+ex) model.add(Dense(64, input_shape=(784,)))
+계산법: (784+1)*64 =total params : +1은 bias(+b값)
+
+2. CNN
+
+Conv2D
+입력 #(batch_size, rows, columns, channels) 4차원
+출력 4차원
+
+model.add(Conv2D(7, (2,2), input_shape=(8,8,1)))
+(batch_size, rows, columns, channels)
+(kernal_size + bias)*input*output
+(2*2+1)*1*7 =total params
+
+Conv1D
+입력 3차원 출력 3차원
+시계열 데이터에 주로 사용
+다른 RNN보다 속도가 빠르고 속도에 비해 성능이 좋다
+Conv2D와 같이 패딩, 스트라이드 다 가능
+
+3. SimpleRNN
+# [batch, timesteps, feature] 3차원
+출력 2차원(return_sequence 쓰면 3차원)
+model.add(SimpleRNN(10, input_shape=(5, 1)))
+units * ( feature + bias + units ) = params
+(10*10) + (1*10) + 10 = 120
+
+
+4. LSTM
+입력 [batch, timesteps, feature] 3차원 
+-> 배치사이즈는 []개수, timesteps[]안의 갯수. feature는 3차원으로 만드는 역할.
+출력 2차원 (return_sequence 쓰면 3차원)
+
+model.add(LSTM(10, input_shape=(5, 1)))
+4 * units * ( feature + bias + units ) = params
+4 * {(10*10) + (1*10) + 10} = 480
+RNN의 4배 그래서 속도가 느리지만, 일반적으로 대용량 시계열 데이터에서 최고의 성능을 뽑음.
+
+
+5. GRU
+# [batch, timesteps, feature] 3차원
+출력 2차원 (return_sequence 쓰면 3차원)
+
+model.add(LSTM(10, input_shape=(5, 1)))
+3 * units * ( feature + bias + units ) = params
+3 * {(10*10) + (1*10) + 10} = 360
+... 이 정석이나 최신버전은 bias=2
+이기 때문에
+3 * {(10*10) + (2*10) + 10} = 390
+속도가 LSTM보다는 빠르고 일반적으로 중저용량 시계열 데이터에서 최적의 성능을 뽑아낸다
+
+
+이미지 데이터도 라벨링 작업을 해야할 때가 있다(y를 만드는 작업)
+와인 데이터를 예로 들면, 기본 문제는 퀄리티에 관한 문제였지만
+화이트 와인인지, 레드 와인인지 구분하는 문제로 변형할 수도 있다.
+이러한 문제들은 개발자가 직업 라벨링 작업을 해주어야한다.
+개발자 본인은 timesteps(몇개씩 자를 건지) 고민하고,
+어떤 데이터를 찾을 것인지 고민 해야 한다.
+split_x도 이 중 한 가지.
+
+return_sequences =True : 2차원데이터를 3차원으로 바꿔줌.
+return_sequences사용 -> LSTM,GRU 연속해서 사용할때 씀
+
+def split_x(dataset, timesteps):                   
+    aaa = []                                       #aaa라는 빈 공간list만들어 놓음 
+    for i in range(len(dataset) - timesteps +1):   #(length : 10) - 5 + 1 = 6  # 즉, for i in 6 : 6번 반복하겠다(0.1.2.3.4.5) i=번마다 한칸씩 올라감 
+                                                         즉, 6줄이 나옴.
+        subset = dataset[i : (i + timesteps)]      #[0~5] 라는 데이터셋이 subset데이터값에 0,1,2,3,4,5개 들어감 ([0:5] =>0~4행까지)
+                                                        즉, 5개의 데이터(1,2,3,4,5)가 들어감.
+        aaa.append(subset)                         #append : aaa의 list에 넣어라     
+    return np.array(aaa)                           # i 에 012345개 차례대로 들어가면서 반복됨 
+
+왜 timesteps 에 1을 더하나?
+'timesteps' 인수에 1을 추가하면 결과 하위 집합의 길이가 정확하고 필요한 모든 데이터가 포함되기 때문에 1을 더함.
+1 2 3
+4 5 6  b 를 구하기 위해서  +1를 해줌.
+7 8 9
