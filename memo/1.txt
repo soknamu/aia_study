@@ -1,0 +1,8 @@
+pip list
+^Z
+import tensorflow as tf
+print(tf.__version__)
+f2 : 이름
+pip uninstall numpy
+
+과제 1. Github 만들기

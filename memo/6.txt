@@ -1,0 +1,5 @@
+ddarung을 KNNimputer, XGbooster를 사용해본 결과
+xgb 성능이 더 높게 나와야하는데, KNNimputer 성능이 더 높게 측정되었다.
+
+csv파일을 확인해보니, KNN은 int(정수형), xgb는 float(실수형)으로 표기되어있었음
+-> xgb를 소수단위까지 보완할 것!

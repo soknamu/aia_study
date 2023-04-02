@@ -1,0 +1,11 @@
+f, g : 둘 다 함수
+f*g : 합성함수
+
+1. 하나 반전 (g)
+2. 이동(g)
+
+( batch_size, rows, columns, channels )
+channels=1 흑백
+channels=3 컬러
+
+parameter 계산

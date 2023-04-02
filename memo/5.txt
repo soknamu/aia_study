@@ -1,0 +1,26 @@
+verbose=
+0(안보이게), 
+1(default, 보이게), 
+2(progress bar 안보이게),
+나머지 (epoch만 보이게)
+
+verbose: "auto", 0, 1, or 2. Verbosity mode. 0 = silent, 1 = progress bar, 2 = single line.
+"auto" defaults to 1 for most cases, and to 2 when used with ParameterServerStrategy.
+ Note that the progress bar is not particularly useful when logged to a file,
+so verbose=2 is recommended when not running interactively (e.g. in a production environment).
+
+import pandas as pd
+'./'
+
+확인해야할 사항 5가지
+shape
+columns
+info
+describe
+type
+
+결측치 처리는 전처리
+train_csv = train_csv.dropna()      ### 결측지 제거 ###
+
+train_csv데이터에서 x와 y를 분리
+x = train_csv.drop(['count'], axis=1)

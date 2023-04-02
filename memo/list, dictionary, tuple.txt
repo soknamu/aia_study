@@ -1,0 +1,26 @@
+List : 순서가 있는 element로 구성되어 있고, 그 순서를 index라고 함
+
+[ ] 대괄호로 표현
+비어있는 list 도 표현가능
+Integer (숫자) -> 그대로 표현
+string (문자) -> " " 나 ' '로 감싸서 표현
+동시에 표현 가능
+list안의 list도 가능
+
+Tuple : list처럼 element들의 순서가 있지만, element의 값을 변경불가
+
+( ) 소괄호로 표현
+tuple안에 tuple 가능
+tuple element 삭제 및 수정시 불가하다는 문구가 뜬다
+삭제 오류 : TypeError: 'tuple' object doesn't support item deletion
+수정 오류 : TypeError: 'tuple' object does not support item assignment
+
+Dictionary : key 와 value가 한쌍을 이루어 element를 가짐.
+
+{ } 중괄호로 표현
+element들은 순서를 갖지 않는다.
+key를 입력하면 value를 반환
+key는 고유한 값이므로 중복된 key를 설정하면 하나를 제외한
+나머지 값들이 전부 무시됨
+key에 리스트는 쓸 수 없다. ( 단, 튜플은 key로 가능 ) ( 변하지않는 값은 key 로 사용가능 -> list는 
+변할 수 있지만 tuple은 변하지 않기 때문에 튜플이 사용이 가능하다! )

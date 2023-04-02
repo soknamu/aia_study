@@ -1,0 +1,13 @@
+# 데이터가 3차원이면 (시계열 데이터)
+# (1000, 100, 1) -> input_shape(100, 1)
+# 데이터가 4차원이면 (이미지 데이터)
+# (60000, 32, 32, 3) -> input_shape(32, 32, 3)
+
+from tensorflow.python.keras.models import Model
+from tensorflow.python.keras.layers import Input
+
+Sequential과 함수형 summary name
+함수형: input layer부터
+sequential: hidden 부터
+
+save model의 위치에 따라 shape만 저장할 수도 있고, 가중치를 저장할 수도 있음

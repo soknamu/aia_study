@@ -1,0 +1,9 @@
+Bias default 0
+
+행 열 바꾸는 법 3가지
+1. x.transpose()
+2. x.T
+3. np.reshape(x,(-1,n)) 
+
+, 끝에 있어도 상관없다 ( 주석 처리의 편리성 )
+train size + test size =< 1

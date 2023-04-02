@@ -1,0 +1,62 @@
+1. MinMaxScaler = 정규화
+
+최소, 최댓값을 각각 0, 1로 바꾸는 스케일링
+식으로 표현하면 X-min(X)/(max(X)-min(X)
+
+ex) 0 ~ 100 의 데이터 중 20을 뽑았다면
+(20 - 0) / (100 - 0) = 0.2
+
+값은 1을 넘을 수도 있고, 음수가 될 수도 있다.
+x_train의 값을 fit 하는게 일반적으로 좋다. (x_test와 x_predict값에 대해 유동적으로 대처 가능하기 때문)
+사용법
+from sklearn.preprocessing import MinMaxScaler
+minMaxScaler = MinMaxScaler()
+print(minMaxScaler.fit(train_data))
+train_data_minMaxScaled = minMaxScaler.transform(train_data)
+
+
+
+2. StandardScaler = 평균과 표준편차를 사용하는 스케일
+
+가장 보편적이지만, 이상치가 있다면 평균과 표준편차에 큰 변화가 생김 ( 가장 큰 단점 )
+
+(Xi - (X의 평균)) / (X의 표준편차)
+ex) 평균 50, 표준편차 = 1 일때 49를 뽑았다면
+(49-50)/1 = -1
+사용법
+from sklearn.preprocessing import StandardScaler
+standardScaler = StandardScaler()
+print(standardScaler.fit(train_data))
+train_data_standardScaled = standardScaler.transform(train_data)
+
+
+
+3. MaxAbsScaler = MinMaxScaler에서 -1까지 확장한, -1 ~ 1 사이의 형태
+
+MinMaxScaler와 유사하게 동작한다.
+사용법
+from sklearn.preprocessing import MaxAbsScaler
+maxAbsScaler = MaxAbsScaler()
+print(maxAbsScaler.fit(train_data))
+train_data_maxAbsScaled = maxAbsScaler.transform(train_data)
+
+
+4. RobustScaler = 중앙값과 IQR(interquartile range, 사분범위(=25%씩 자른 확률분포))를 사용
+
+아웃라이어(=이상치랑 비슷한 맥락, 평균에서 크게 벗어나는 값)의 영향을 최소화 할 수 있는 스케일링
+
+사분범위를 사용하기 때문에 StandardScaler와 비교했을 때, 더 넓은 분포를 가짐
+IQR = Q3 - Q1 -> 25퍼센타일과 75퍼센타일 값을 다룸
+
+사용법
+from sklearn.preprocessing import RobustScaler
+robustScaler = RobustScaler()
+print(robustScaler.fit(train_data))
+train_data_robustScaled = robustScaler.transform(train_data)
+
+사용법은 모두 동일하게 fit 와 transform을 사용하면 된다.
+
+주의사항: train_test_split 이후에 x_train을 스케일링 하였지만, 그 전 단계에 아웃라이어 제거가 선행되어야 한다.
+따라서 아웃라이어나 데이터 분포를 판단하고 상황마다 적절한 스케일러 사용해야한다.
+
+ 

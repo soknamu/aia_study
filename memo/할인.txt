@@ -1,0 +1,17 @@
+Why are you interested in this stipend?
+If you are interested in the course and exam stipend please describe your interest in both.
+집안의 사정으로 인해 저는 중등교육을 받지 못하였지만, 항상 수학과 과학에 관심이 있었고, 뉴스매체를 통해
+chatGPT의 강력한 성능에 대해 알게 되었습니다. 그 후, 해당분야에 관심이 생겨 tensorflow에 대해 공부하고있습니다.
+아직까지는 전문적인 수준의 코드를 구현하지는 못하지만, 차차 성장해나갈 수 있도록 반드시 노력할 것입니다.
+
+
+
+Why are you a good candidate for the stipend? *
+저는 올해 23살이 되며, 집안이 가난하여 초등학교 과정까지만 이수하고, 중등교육은 받지 못하였습니다. 
+공부에 뜻이 없어 길을 헤매던 저에게, 최근 chatGPT가 이슈화됨에 따라 해당 분야에 관심이 생겼습니다.
+처음에 공부할때엔 수학적 의미를 이해하지 못하였지만, 반복해서 살펴본결과 일정 수준의 이상의 코드까지는 작성할 수
+있게 되었습니다. 저의 동생 또한, 마찬가지로 중등 교육을 받지 못하였지만 제가 이 자격증을 취득함으로써,
+할 수 있다는 자신감을 동생에게 주고싶습니다.
+
+Can you share more about how you've used TensorFlow in your past work or projects?
+Please include a link, if possible. Please put N/A if you haven’t used TensorFlow. *

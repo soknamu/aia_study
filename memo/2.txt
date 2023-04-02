@@ -1,0 +1,23 @@
+input layer
+
+hidden layer
+
+output layer
+
+shift+delete : 라인삭제
+ctrl + / : 주석
+
+hyper-parameter tuning
+1. layer 
+2. node
+3. mae,mse
+4. epoch
+5. batch (Default value = 32)
+
+2000 data, epochs=20, batch_size=500 -> 80 iteration
+
+행무시, 열우선
+
+MLP: Multi Layer Perceptron
+
+과제 2. 행렬 예제 만들기

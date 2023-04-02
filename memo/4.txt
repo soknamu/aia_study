@@ -1,0 +1,29 @@
+activation='relu'
+sigmoid ( 0 ~ 1 )
+tanh ( 말그대로 하이퍼블릭 탄젠트 , -1 ~ 1 )
+relu ( 0 이상이면 그대로, 0이하면 0 )
+
+model = Sequential( )안에 Dense(인풋, 히든, 아웃풋 레이어층) 전부 집어 넣어도 된다.
+ex)
+model = Sequential([
+    Dense(64, input_dim=13, activation='relu'),
+    Dense(64, activation='relu'),
+    Dense(32, activation='relu'),
+    Dense(1)
+])
+
+
+히든 레이어층의 Dense는 보통 2^n을 많이 쓴다 ( 보편적 )
+
+레이어층 5~6개 적당 ( 보편적 )
+
+optimizer = adam(learning_rate=0.0005)  (default=0.001) ( 수식은 나중에 공부하자 .. )
+
+verbose=
+0(안보이게), 
+1(default, 보이게), 
+2(val_loss까지 보이게)
+
+validation_split ( train data 를 다시 test data 로 사용하는 비율 설정 )
+
+model.add(Dropout(0.2)) -> ( 데이터의 20%를 버리기, overfitting(과적합) 을 방지할 수 있다. )

@@ -1,0 +1,6 @@
+concatenate (function)
+merge1 = concatenate([output1, output2, output3], name='mg1')
+
+
+Concatenate (Class)
+merge1 = Concatenate(name='mg1')([output1, output2, output3])
