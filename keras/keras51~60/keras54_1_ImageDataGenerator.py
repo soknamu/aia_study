@@ -37,8 +37,8 @@ xy_test = test_datagen.flow_from_directory(
 )
 
 print(xy_train)
-
 # train : Found 160 images belonging to 2 classes. (class 2 : 0과 1)
+
 # x의 값은 (160, 200, 200, 1) -> (개수, 가로, 세로, 색깔) 4차원shape @@증폭이 되지않은 상태.@@
 # y의 값은 (160,)
 
@@ -53,8 +53,9 @@ print(xy_train)
 #<keras.preprocessing.image.DirectoryIterator object at 0x0000014E6D4C7B50> Iterator(반복자=list)
 print(xy_train[0])
 #print(xy_train.shape) #error
+
 print(len(xy_train))    #32
-print(len(xy_train[0])) #2 -> x와 y
+print(len(xy_train[0])) #2개 -> x와 y 이렇게 하나씩 들어있어서.
 print(xy_train[0][0]) #엑스가 다섯개 들어가있다. 
 print(xy_train[0][1]) #[1. 0. 0. 0. 1.]
 

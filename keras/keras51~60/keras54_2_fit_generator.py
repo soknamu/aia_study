@@ -79,7 +79,7 @@ model.compile(loss= 'binary_crossentropy', optimizer = 'adam', metrics = ['acc']
 # 슬라이스하지말고 숫자로 넣어라.
 
 #model.fit(xy_train[0][0], xy_train[0][1], epochs=10) #이거는 가능. Total params: 39,759,105 통배치가능
-hist = model.fit_generator(xy_train, epochs=1000, 
+hist = model.fit_generator(xy_train, epochs=1000, #xy_train에 배치사이즈와 데이터가 들어가있음.
                     steps_per_epoch= 32,  #-> epoch를 나눈것 만큼 짤라서씀. => 전체데이터크기/batch 160/5 = 32 그 이상으로 주면 맛탱이감.
                     validation_data= xy_test,
                     validation_steps=24, # 발리데이터/ batch => 120/5 = 24

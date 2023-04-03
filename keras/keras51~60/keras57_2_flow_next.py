@@ -3,6 +3,7 @@
 from tensorflow.keras.datasets import fashion_mnist
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import numpy as np
+import random
 
 (x_train, y_train), (x_test,y_test) = fashion_mnist.load_data()
 
@@ -38,21 +39,39 @@ x_data = train_datagen.flow(np.tile(x_train[0].reshape(28*28),augment_size).resh
                             np.zeros(augment_size), #y의 데이터 : 그림만 그릴꺼라 필요없어서 걍  0넣어줌.
                             batch_size=augment_size,
                             shuffle=True,
-) 
+).next()
+
+#".next()" 메서드는 ImageDataGenerator 클래스를 사용하여 생성된 증강 데이터 생성기에서 데이터의 다음 배치를 가져오는 데 사용됩니다. 
+# 이 생성기는 뒤집기, 이동 및 회전과 같은 다양한 변환을 적용하여 원본 데이터의 새 버전을 생성합니다. 
+# 생성기는 ".next()" 메서드를 호출하여 원래 훈련 세트에 있는 첫 번째 이미지의 증강 버전으로 구성된 데이터의 다음 배치를 생성합니다. 
+# 결과 데이터는 증강 이미지와 해당 레이블을 모두 포함하는 변수 "x_data"에 저장됩니다. 
+#
+# 요약하자면 .next() 앞에있는 한덩어리를 그대로 가져오겠다.
+
 #flow와 디렉토리의 차이.
 #차이점 : 경로를 받아드리지 않는다.
-print(x_data) #<keras.preprocessing.image.NumpyArrayIterator object at 0x00000262D3EB4FA0> 이터레이터 뜸.
+print(x_data) # x와 y가 합쳐진 데이터 출력 print(x_data[0])와 동일한 구조.
+print(type(x_data)) #<class 'tuple'>
+print(x_data[0]) # x의 데이터
+print(x_data[1]) # y의 데이터
+print(x_data[0].shape, x_data[1].shape) #(100, 28, 28, 1) (100,) 튜플안에 넘파이구조가 들어가있어서 shape 찍기가능.
+                                        #(튜플안의 주소값 자체는 변환이 안되지만, 안에 있는 주소값은 변환가능)
 
+#print(type(x_data[0]))
+'''
 print(x_data[0]) #x와 y가 모두 포함.
 print(x_data[0][0].shape) #(100, 28, 28, 1) 모든 데이터의 x
 print(x_data[0][1].shape) #(100,) 모든 데이터의 y
+'''
 
 import matplotlib.pyplot as plt
 plt.figure(figsize=(7,7))
 for i in range(49):
     plt.subplot(7, 7, i+1) #총 49개의 플롯을 만들고,
     plt.axis('off')
-    plt.imshow(x_data[0][0][i], cmap= 'gray')
+    #plt.imshow(x_data[0][0][i], cmap= 'gray') #next() 미사용
+    plt.imshow(x_data[0][i], cmap= 'gray') #next() 사용
+    
 plt.show()
 
 #augment_size가 100개지만, figsize로 49개로 조정함.
