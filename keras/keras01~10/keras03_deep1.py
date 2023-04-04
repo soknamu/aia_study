@@ -16,6 +16,9 @@ model.add(Dense(3, input_dim=1)) # 3을 붙인이유 첫부분에서 뻗어나�
 model.add(Dense(28)) #위에 인풋이 입력되어 있어서 인풋을 생략
 model.add(Dense(32))
 model.add(Dense(28))
+model.add(Dense(28))
+model.add(Dense(28))
+model.add(Dense(28))
 model.add(Dense(23))
 model.add(Dense(21))  #개수니깐 소수는 x
 model.add(Dense(21))
