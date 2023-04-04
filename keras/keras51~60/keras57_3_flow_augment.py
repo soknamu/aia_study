@@ -1,3 +1,4 @@
+
 #수치로 되있는 데이터를 증폭시킨다 =flow
 
 from tensorflow.keras.datasets import fashion_mnist

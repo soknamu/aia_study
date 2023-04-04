@@ -48,8 +48,6 @@ x_data = train_datagen.flow(np.tile(x_train[0].reshape(28*28),augment_size).resh
 #
 # 요약하자면 .next() 앞에있는 한덩어리를 그대로 가져오겠다.
 
-#flow와 디렉토리의 차이.
-#차이점 : 경로를 받아드리지 않는다.
 print(x_data) # x와 y가 합쳐진 데이터 출력 print(x_data[0])와 동일한 구조.
 print(type(x_data)) #<class 'tuple'>
 print(x_data[0]) # x의 데이터

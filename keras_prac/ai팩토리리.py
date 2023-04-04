@@ -26,4 +26,4 @@ predictions = model.predict(test_data)
 # Save predictions to submission file
 new_predictions = [0 if x == 1 else 1 for x in predictions]
 submission['label'] = pd.DataFrame({'Prediction': new_predictions})
-submission.to_csv(save_path+'submission2.csv', index=False)
+submission.to_csv(save_path+'submission4.csv', index=False)

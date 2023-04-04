@@ -11,24 +11,24 @@ x_train = np.load(save_path + 'keras58_1_cifar100_x_train.npy')
 x_test = np.load(save_path + 'keras58_1_cifar100_x_test.npy')
 y_train = np.load(save_path + 'keras58_1_cifar100_y_train.npy')
 y_test = np.load(save_path + 'keras58_1_cifar100_y_test.npy')
-
+batch_size = 128
 #2.모델구성
 model = Sequential()
-model.add(Conv2D(128, (3,3), input_shape=(32,32,3), activation= 'relu')) #x_train.shape[1:]
+model.add(Conv2D(256, (3,3), input_shape=(32,32,3), activation= 'relu')) #x_train.shape[1:]
 model.add(MaxPooling2D())
-model.add(Conv2D(128, (3,3), padding='same', activation='relu'))
+model.add(Conv2D(256, (3,3), padding='same', activation='relu'))
 model.add(MaxPooling2D())
-model.add(Conv2D(64, (3,3), padding='same', activation= 'relu'))
+model.add(Conv2D(128, (3,3), padding='same', activation= 'relu'))
 model.add(Flatten())
+model.add(Dense(64,activation='relu'))
+model.add(Dense(48,activation='relu'))
 model.add(Dense(32,activation='relu'))
-model.add(Dense(16,activation='relu'))
-model.add(Dense(8,activation='relu'))
 model.add(Dense(100,activation='softmax'))
 #y_train.shape[1] = output 의 값.
 #3.컴파일, 훈련
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics= ['acc'])
 es = EarlyStopping(monitor='val_acc', mode='max', verbose=1, restore_best_weights=True, patience=50)
-hist = model.fit(x_train, y_train, epochs = 50, validation_data=(x_test, y_test),
+hist = model.fit(x_train, y_train, epochs = 50, steps_per_epoch=len(x_train, y_train)/batch_size,validation_data=(x_test, y_test),
                  callbacks = [es])
 
 ed = time.time()
