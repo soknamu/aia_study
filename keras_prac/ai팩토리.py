@@ -10,6 +10,8 @@ from sklearn.preprocessing import MinMaxScaler
 #1. 데이터
 #1-1 경로, save
 
+
+
 path = 'c:/sok/aia_study/_data/air/'
 save_path = 'c:/sok/aia_study/_save/air/'
 

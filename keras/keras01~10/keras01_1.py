@@ -4,7 +4,7 @@ c=a+b # a와 b룰 더한 값을 c라는 메모리 공간에 넣는다.
 print("a와 b를 더한 값 : ", c)
  
 # 실행 : ctrl + F5
-d= c+a
+d= c+a+c
 print("a와 C를 더한 값 : ", d)
 e= d+c
 print("d와 e를 더한 값 : ", e)

@@ -14,6 +14,10 @@ data = pd.concat([train_data, test_data], axis=0)
 # Preprocess data
 # ...
 
+
+
+
+
 # Train isolation forest model on train data
 model = IsolationForest(n_estimators=3000,random_state=3245,max_samples=2463,
                         max_features=8, bootstrap=False,)
