@@ -1,5 +1,5 @@
 from tensorflow.keras.preprocessing.text import Tokenizer #전처리 개념.
-
+import numpy as np
 text = '나는 진짜 매우 매우 맛있는 밥을 엄청 마구 마구 마구 먹었다.'
 
 #Tokenizer : 단어별로 짜르겠다, 수치화를 지정 해야됨.
@@ -44,12 +44,52 @@ x = token.texts_to_sequences([text])
 # #결국 0을 지우고 (11,1)로 reshape
 
 
-###################2. pandas ##################
+###################2. pandas ################## 1차원으로 받아드려야됨.
 import pandas as pd
-import numpy as np
 
-x = np.array(pd.get_dummies(x[0]))
+#x = np.array(pd.get_dummies(x[0])) #[0]을 안넣으면 주소값의 주소값을 불러오는 것이기 때문에. [0] 사용.
+#x = [[3, 4, 2, 2, 5, 6, 7, 1, 1, 1, 8]] x[0]의 의미가 [3, 4, 2, 2, 5, 6, 7, 1, 1, 1, 8]
+#따라서 [3, 4, 2, 2, 5, 6, 7, 1, 1, 1, 8]을 원핫해줘야되기 때문에 x[0] 을 사용.
+#x = np.array(pd.get_dummies(x[0]))
+#x = pd.get_dummies(np.array(x).reshape(11,))
+x = pd.get_dummies(np.array(x).ravel()) #flatten이랑 동일.
+#3개 다 동일한 코드
+
+# [[0 0 1 0 0 0 0 0]
+#  [0 0 0 1 0 0 0 0]
+#  [0 1 0 0 0 0 0 0]
+#  [0 1 0 0 0 0 0 0]
+#  [0 0 0 0 1 0 0 0]
+#  [0 0 0 0 0 1 0 0]
+#  [0 0 0 0 0 0 1 0]
+#  [1 0 0 0 0 0 0 0]
+#  [1 0 0 0 0 0 0 0]
+#  [1 0 0 0 0 0 0 0]
+#  [0 0 0 0 0 0 0 1]]
 
 print(x) #TypeError: unhashable type: 'list'
+print(x.shape) #(11, 8)
 # 오류 : 첫번째 리스트를 넘파이로 바꿔야 된다.
-#        두번째 그러면 리스트는 왜 안될까?        
+#        두번째 그러면 리스트는 왜 안될까?
+# 함수가 pandas Series 또는 DataFrame 개체를 입력으로 예상하기 때문에 
+# 따라서 list은 이 함수에 유효한 입력 유형이 아닙니다.
+
+'''
+######### 3.사이킷런 onehot #############
+from sklearn.preprocessing import OneHotEncoder
+ohe = OneHotEncoder(sparse=False) 
+x = np.array(x)
+x = x.reshape(-1,1)
+x = ohe.fit_transform(x)
+print(x.shape)
+print(x)
+'''
+
+# ######### 3.사이킷런 onehot #############  // 2차원에서 먹힘.
+# from sklearn.preprocessing import OneHotEncoder
+# ohe = OneHotEncoder() 
+# x = ohe.fit_transform(np.array(x).reshape(11,1)).toarray()
+# print(x)
+# print(x.shape) #(11, 8)
+
+##############지금까지 한것. 문자를 숫자로 만들었고, 숫자들의 순서를 세우기 위해서 원핫 인코더를 함.#########################
