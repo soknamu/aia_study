@@ -1,6 +1,6 @@
 from keras.preprocessing.text import Tokenizer
 import numpy as np
-
+from tensorflow.keras.callbacks import EarlyStopping
 #1. 데이터
 
 docs = ['너무 재밌어요', '참 최고에요', '참 잘 만든 영화예요',
@@ -11,8 +11,7 @@ docs = ['너무 재밌어요', '참 최고에요', '참 잘 만든 영화예요'
         ]
 
 #긍정 1, 부정 0
-label =  np.array([1,1,1,1,1,0,0,0,0,0,0,1,1,0])
-
+labels =  np.array([1,1,1,1,1,0,0,0,0,0,0,1,1,0]) # y의 값.
 token =  Tokenizer()
 token.fit_on_texts(docs)
 
@@ -37,33 +36,47 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 pad_x = pad_sequences(x, padding='pre', maxlen=5)
 #pre는 앞에서 부터, maxlen 길이를 늘린다(0을 채워 넣는다.), if maxlen=4로 하면 5개짜리 데이터는 앞이 짤려나감.
 print(pad_x)
-# [[ 0  0  0  2  5] input : 5 output : 1
-#  [ 0  0  0  1  6]
-#  [ 0  1  3  7  8]
-#  [ 0  9 10 11 12]
-#  [13 14 15 16 17]
-#  [ 0  0  0  0 18]
-#  [ 0  0  0  0 19]
-#  [ 0  0  0 20 21]
-#  [ 0  0  0 22 23]
-#  [ 0  0  0  0 24]
-#  [ 0  0  0  2 25]
-#  [ 0  0  0  1 26]
-#  [ 0  4  3 27 28]
-#  [ 0  0  0  4 29]]
+
 print(pad_x.shape) #(14, 5)
 
 word_size = len(token.word_index)
 print("단어사전의 개수는 : ", word_size) #단어사전의 개수는 :  29
 
-######### 3.사이킷런 onehot #############  // 2차원에서 먹힘.
-from sklearn.preprocessing import OneHotEncoder
-ohe = OneHotEncoder() 
-x = ohe.fit_transform(np.array(x).reshape(-1,1)).toarray()
-print(x)
-print(x.shape)
+
+pad_x = pad_x.reshape(14,5,1)
+#pad_x = pad_x.reshape(pad_x.shape[0],pad_x.shape[1],1)
 
 #2. 모델
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
+from tensorflow.keras.layers import Dense, LSTM, Reshape, Embedding #텍스트에 상당히 좋다.
 #rnn으로 reshape (14,5,1)로 바꿔줌.
+#고정된 크기로 변환 Embedding(one hot encording)
+model = Sequential()
+model.add(Embedding(29, 32,input_length=5)) 
+#model.add(Embedding(29, 32, 5)) ValueError: Could not interpret initializer identifier: 5
+#model.add(Embedding(input_dim = 29, output_dim = 32(33으로 해도됨.), input_length=5(text의 길이(maxlen의 길이))->명시하지 않아도 최대값으로 돌아감)) 
+#model.add(Embedding(29, 32)) 위에 식이랑 같음.
+#input_dim 29개 이상을 하든 이하를 하든 돌아감. 대신 그 이상을 들어가면 필요없는 값들이 많이들어감. 
+#그 이하로 넣으면 연산량이 확떨어져서 정확도가 떨어짐.
+#그래서 값을 최대한 맞춰줘야됨 그래야 정확도가 올라감.
+model.add(LSTM(128)) 
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(64, activation='relu'))
+model.add(Dense(32, activation='relu'))
+model.add(Dense(1, activation= 'sigmoid'))
+model.summary()
+
+'''
+#3. 컴파일, 훈련
+model.compile(loss='binary_crossentropy', optimizer='adam', metrics = ['acc'])
+es = EarlyStopping(monitor='acc', mode='max', patience=200, restore_best_weights=True)
+model.fit(pad_x, labels, epochs=1000, batch_size = 7, callbacks=[es])
+
+#4. 평가, 예측
+acc = model.evaluate(pad_x, labels)[1]
+print('acc: ', acc)
+
+#acc:  1.0
+'''
