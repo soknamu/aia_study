@@ -7,7 +7,7 @@ y = np.array([1,2,3])    #
 import tensorflow as tf
 from tensorflow.keras.models import Sequential #모델스 폴더안에 시퀀셜이라는 폴더를 땡겨온다.
 from tensorflow.keras.layers import Dense # layers 폴더안에 Dense이라는 폴더를 땡겨온다.
-
+from sklearn.preprocessing import MaxAbsScaler
 model = Sequential()   
 model.add(Dense(1, input_dim=1))   
 

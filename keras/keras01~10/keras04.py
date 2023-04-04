@@ -14,6 +14,8 @@ model.add(Dense(2, input_dim=1)) #여기서부터 히든레이어
 model.add(Dense(26))
 model.add(Dense(21))
 model.add(Dense(15))
+model.add(Dense(15))
+model.add(Dense(15))
 model.add(Dense(12))
 model.add(Dense(9))
 model.add(Dense(7))
