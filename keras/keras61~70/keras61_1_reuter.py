@@ -78,3 +78,5 @@ hist = model.fit(x_train, y_train, epochs=1000, batch_size = 256, validation_dat
 #4. 평가, 예측
 acc = model.evaluate(x_test, y_test)[1] #0번쨰째가
 print('acc: ', acc)
+
+# acc:  0.5707924962043762
