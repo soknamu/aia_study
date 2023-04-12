@@ -34,7 +34,7 @@ X_test = data[len(train_data):]
 
 # Train One-Class SVM model on train data
 from sklearn.svm import OneClassSVM
-model = OneClassSVM(kernel='linear', nu=0.05)
+model = OneClassSVM(kernel='linear', nu=0.045)
 model.fit(X_train)
 
 # Predict anomalies in test data

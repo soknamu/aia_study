@@ -63,7 +63,7 @@ print(hist.history['val_loss'])
 print("==========================================")
 
 
-matplotlib.rcParams['font.family'] = 'malgun gothic'
+# matplotlib.rcParams['font.family'] = 'malgun gothic'
 
 #가급적이고 나눔채사용
 
