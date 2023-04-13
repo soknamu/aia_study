@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from tensorflow.python.keras.models import Sequential, Model
 from tensorflow.python.keras.layers import Dense, LeakyReLU, Input, Dropout
-from sklearn.metrics import r2_score, f1_score
+from sklearn.metrics import f1_score
 from tensorflow.python.keras.callbacks import EarlyStopping, ModelCheckpoint
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
@@ -12,8 +12,8 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 
-path = 'c:/sok/aia_study/_data/air/'
-save_path = 'c:/sok/aia_study/_save/air/'
+path = './_data/air/'
+save_path = './_save/air/'
 
 train_csv = pd.read_csv(path + 'train_data.csv')
 test_csv = pd.read_csv(path + 'test_data.csv')
