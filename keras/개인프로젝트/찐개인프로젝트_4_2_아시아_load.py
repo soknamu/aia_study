@@ -67,7 +67,7 @@ loss = model.evaluate(x_test, y_test)
 print('loss : ', loss)
 
 datagen = ImageDataGenerator()
-pred_path = 'd:/study_data/_data/asian_data_predict_no/' 
+pred_path = 'd:/study_data/_data/asian_data_predict/' 
 predict = datagen.flow_from_directory(pred_path, target_size=(96,96), class_mode='categorical', color_mode='rgb', shuffle=False)
 0.
 x_pred = predict[0][0]
