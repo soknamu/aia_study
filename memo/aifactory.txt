@@ -1,0 +1,2 @@
+유사한 칼럼을 y로 가짐
+train randomforest, 값이 없어도 돌아감.
