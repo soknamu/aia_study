@@ -4,9 +4,9 @@ from rembg import remove
 
 # PIL 패키지에서 Image 클래스 불러오기
 from PIL import Image 
-path = "./asian_data/2/"
+path = 'd:study_data/_data/asian_data_predict/0대/'
 # Load the image
-image = cv2.imread(path + "00011A02.jpg")
+image = cv2.imread(path + "202104191049546247_d.jpg")
 
 # Convert to the HSV color space
 hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
