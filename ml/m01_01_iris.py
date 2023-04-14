@@ -66,7 +66,6 @@ for dataset, name in datasets:
         model.fit(x, y)
         score = model.score(x, y)
         print(f"Dataset: {name}, Model: {type(model).__name__}, Score: {score}")
-
 # Dataset: Iris, Model: LinearSVC, Score: 0.9466666666666667
 # Dataset: Iris, Model: RandomForestClassifier, Score: 1.0
 # Dataset: Breast Cancer, Model: LinearSVC, Score: 0.9876977152899824

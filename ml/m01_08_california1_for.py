@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.datasets import load_boston
+from sklearn.datasets import load_boston,fetch_california_housing
 
 #1. data
 # datasets = load_iris()
@@ -32,15 +32,3 @@ results = model.score(x,y)
 
 
 print(results) #0.9739684003422027
-
-#Traceback (most recent call last):
-#   File "c:\Users\bitcamp\Documents\GitHub\aia_study\ml\m01_08_boston.py", line 27, in <module>
-#     model.fit(x,y)
-#   File "C:\Users\bitcamp\anaconda3\envs\tf274gpu\lib\site-packages\sklearn\ensemble\_forest.py", line 367, in fit
-#     y, expanded_class_weight = self._validate_y_class_weight(y)
-#   File "C:\Users\bitcamp\anaconda3\envs\tf274gpu\lib\site-packages\sklearn\ensemble\_forest.py", line 734, in _validate_y_class_weight
-#     check_classification_targets(y)
-#   File "C:\Users\bitcamp\anaconda3\envs\tf274gpu\lib\site-packages\sklearn\utils\multiclass.py", line 197, in check_classification_targets
-#     raise ValueError("Unknown label type: %r" % y_type)
-# ValueError: Unknown label type: 'continuous
-# -> 회귀평가에 분류평가를 사용하면 이런 오류가뜸
