@@ -1,6 +1,6 @@
 import pandas as pd
 from sklearn.neighbors import LocalOutlierFactor
-from sklearn.preprocessing import RobustScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 # Load train and test data
 path='./_data/air/'
@@ -25,14 +25,14 @@ train_data['type']=type_to_HP(train_data['type'])
 test_data['type']=type_to_HP(test_data['type'])
 
 # Scale the numerical features
-scaler = RobustScaler()
+scaler = StandardScaler()
 num_features = ['air_inflow', 'air_end_temp', 'motor_current', 'motor_rpm','motor_temp','motor_vibe']
 data[num_features] = scaler.fit_transform(data[num_features])
 train_data[num_features] = scaler.transform(train_data[num_features])
 test_data[num_features] = scaler.transform(test_data[num_features])
 
 # Train Local Outlier Factor model on train data
-lof = LocalOutlierFactor(n_neighbors=23, contamination=0.01, novelty=False) # set novelty=True for LOF novelty detection
+lof = LocalOutlierFactor(n_neighbors=15, contamination=0.01, novelty=False,algorithm='ball_tree') # set novelty=True for LOF novelty detection
 lof.fit(train_data)
 
 # Predict anomalies in test data
@@ -47,3 +47,5 @@ import datetime
 date = datetime.datetime.now()
 date = date.strftime('%m%d_%H%M%S')
 submission.to_csv(save_path +'air_' + date + '.csv', index=False)
+
+#ball_tree 0.59, auto = 0.62

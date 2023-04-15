@@ -34,7 +34,6 @@ y_predict = model.predict(x_data)
 results = model.evaluate(x_data, y_data)
 print("model.score : ", results[1]) #자동으로 모델에서 acc나 r2score로 조정해줌.
 
-
 acc = accuracy_score(y_data, np.round(y_predict))
 print('accuracy_score :', acc)
 
