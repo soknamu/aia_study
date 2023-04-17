@@ -21,6 +21,10 @@ x_test = np.load(save_path + 'x_test3.npy', allow_pickle=True)
 y_train = np.load(save_path + 'y_train3.npy', allow_pickle=True)
 y_test = np.load(save_path + 'y_test3.npy', allow_pickle=True)
 
+y_train = y_train.flatten()
+y_test = y_test.flatten()
+y_train = y_train[:6328]
+
 # 2. 모델
 model = CatBoostClassifier(verbose= 0)
 
