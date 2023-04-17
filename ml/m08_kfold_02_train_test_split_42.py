@@ -7,17 +7,15 @@ from sklearn.utils import all_estimators
 warnings.filterwarnings(action = 'ignore')
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
-#1. 데이터
 
+#1. 데이터
 data_list = [load_boston(return_X_y=True),
-            fetch_california_housing(return_X_y=True),
-             load_diabetes(return_X_y=True)
-             ,]
+             fetch_california_housing(return_X_y=True),
+             load_diabetes(return_X_y=True)]
 
 data_name_list = ['boston',
                   'california',
-                  'diabetes',
-                  ]
+                  'diabetes']
 
 scaler_list = [MinMaxScaler(),
                StandardScaler(),
@@ -25,22 +23,17 @@ scaler_list = [MinMaxScaler(),
                RobustScaler()]
 
 scaler_name_list = ['MinMaxScaler',
-               'StandardScaler',
-               'MaxAbsScaler',
-               'RobustScaler']
+                    'StandardScaler',
+                    'MaxAbsScaler',
+                    'RobustScaler']
 
 n_splits=5
 kfold = KFold(n_splits = n_splits, shuffle = True, random_state = 413)
 
-max_score = 0
-max_name = '최대값'
-max_scaler = 'max'
-
 #1. 데이터
 for index, value in enumerate(data_list):
     x, y = value
-    x_train,x_test,y_train,y_test = train_test_split(
-        x,y,random_state=1534, train_size=0.7, shuffle=True)
+    x_train,x_test,y_train,y_test = train_test_split(x,y,random_state=1534, train_size=0.7, shuffle=True)
     print("==================", data_name_list[index], "======================")
     for i, scaler in enumerate(scaler_list):
         scaler_name = scaler_name_list[i]
@@ -52,14 +45,15 @@ for index, value in enumerate(data_list):
         for name, algorithm in all_estimators(type_filter='regressor'):
             try:
                 model = algorithm()
-                y_predict = cross_val_predict(model, x_test_scaled, y_test, cv= kfold)
-                cvs = r2_score(y_test, y_predict)
-                results =round(np.mean(cvs),4)
-                if max_score < results:
-                    max_score = results
+                scores = cross_val_score(model, x_train_scaled, y_train, cv=kfold, scoring='r2')
+                if max_score < scores.mean():
+                    max_score = scores.mean()
                     max_name = name
                     max_scaler = scaler_name_list[i]
             except:
                 continue
         print('Scaler:', max_scaler, 'Model:', max_name, 'Score:', max_score)
     print("======================================================")
+
+
+

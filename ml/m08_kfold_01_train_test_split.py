@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.datasets import load_iris,load_breast_cancer,load_digits,load_wine
-from sklearn.model_selection import cross_val_score, KFold, cross_val_predict
+from sklearn.model_selection import cross_val_score, KFold, cross_val_predict, StratifiedKFold
 import warnings
 from sklearn.preprocessing import RobustScaler,StandardScaler,MaxAbsScaler,MinMaxScaler
 from sklearn.utils import all_estimators
@@ -32,7 +32,7 @@ scaler_name_list = ['MinMaxScaler',
                'RobustScaler']
 
 n_splits=5
-kfold = KFold(n_splits = n_splits, shuffle = True, random_state = 413)
+kfold = StratifiedKFold(n_splits = n_splits, shuffle = True, random_state = 413)
 
 max_score = 0
 max_name = '최대값'
@@ -43,15 +43,17 @@ for index, value in enumerate(data_list):
     x, y = value
     x_train,x_test,y_train,y_test = train_test_split(x,y,random_state=1534, train_size=0.7, shuffle=True)
     print("==================", data_name_list[index], "======================")
-    for i, value2 in enumerate(scaler_list):
-        scaler = value2
+    for i, scaler in enumerate(scaler_list):
+        scaler_name = scaler_name_list[i]
+        x_train_scaled = scaler.fit_transform(x_train)
+        x_test_scaled = scaler.transform(x_test)
         max_score = 0
         max_name = '최대값'
         max_scaler = 'max'
         for name, algorithm in all_estimators(type_filter='classifier'):
             try:
                 model = algorithm()
-                y_predict = cross_val_predict(model, x_test, y_test, cv= kfold)
+                y_predict = cross_val_predict(model, x_test_scaled, y_test, cv= kfold)
                 acc = accuracy_score(y_test, y_predict)
                 results =round(np.mean(acc),4)
                 if max_score < results:

@@ -32,7 +32,7 @@ train_data[num_features] = scaler.transform(train_data[num_features])
 test_data[num_features] = scaler.transform(test_data[num_features])
 
 # Train Local Outlier Factor model on train data
-lof = LocalOutlierFactor(n_neighbors=25, contamination=0.01, novelty=False,algorithm='auto') # set novelty=True for LOF novelty detection
+lof = LocalOutlierFactor(n_neighbors=24, contamination=0.01, novelty=False,algorithm='auto') # set novelty=True for LOF novelty detection
 lof.fit(train_data)
 
 # Predict anomalies in test data
