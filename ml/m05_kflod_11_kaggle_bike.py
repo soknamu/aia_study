@@ -17,8 +17,6 @@ test_csv = pd.read_csv(path + 'test.csv', index_col= 0)
 
 #print(train_csv.isnull().sum()) #결측치 없음
 
-
-
 x = train_csv.drop(['count','casual','registered'], axis =1)
 
 y = train_csv['count']

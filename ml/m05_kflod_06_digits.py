@@ -49,12 +49,12 @@ for  i, value in enumerate(data_list): #enumerate수치와 순서를 나타내�
         print('ACC :', scores, 
       '\n cross_val_score average : ', round(np.mean(scores),4))
         
-# covtype
-# ACC : [0.63459635 0.50435875 0.62474828 0.63562589 0.6327688 ]
-#  cross_val_score average :  0.6064
-# ACC : [0.6199926  0.62298736 0.62171047 0.61918039 0.61831122]
-#  cross_val_score average :  0.6204
-# ACC : [0.9403888  0.93895166 0.93838316 0.94002685 0.9385983 ]
-#  cross_val_score average :  0.9393
-# ACC : [0.95584451 0.95558634 0.95420905 0.95562039 0.95462212]
-#  cross_val_score average :  0.9552
+# digits :
+# LinearSVC ACC : [0.93888889 0.95555556 0.94707521 0.95264624 0.9637883 ] 
+#  cross_val_score average :  0.9516
+# LogisticRegression ACC : [0.93611111 0.96111111 0.96657382 0.94707521 0.96657382] 
+#  cross_val_score average :  0.9555
+# DecisionTreeClassifier ACC : [0.83333333 0.9        0.83844011 0.82451253 0.88579387] 
+#  cross_val_score average :  0.8564
+# RandomForestClassifier ACC : [0.96666667 0.98333333 0.98050139 0.97214485 0.96657382] 
+#  cross_val_score average :  0.9738

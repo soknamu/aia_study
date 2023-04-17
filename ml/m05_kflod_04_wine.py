@@ -48,3 +48,13 @@ for  i, value in enumerate(data_list): #enumerate수치와 순서를 나타내�
         #4. 평가, 예측
         print('ACC :', scores, 
       '\n cross_val_score average : ', round(np.mean(scores),4))
+        
+#load_wine
+# ACC : [0.94444444 0.80555556 0.88888889 0.85714286 0.82857143]
+#  cross_val_score average :  0.8649
+# ACC : [0.88888889 1.         0.88888889 0.94285714 0.97142857]
+#  cross_val_score average :  0.9384
+# ACC : [0.94444444 0.94444444 0.83333333 0.91428571 0.97142857]
+#  cross_val_score average :  0.9216
+# ACC : [0.94444444 1.         0.97222222 1.         1.        ]
+#  cross_val_score average :  0.9833 
