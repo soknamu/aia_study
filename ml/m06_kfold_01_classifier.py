@@ -40,6 +40,7 @@ for index, value in enumerate(data_list):
     x, y = value 
     for i, value2 in enumerate(scaler_list):
         scaler = value2
+        x_scaler = scaler.fit_transform(x)
         #2. 모델구성
         allAlgorithms = all_estimators(type_filter='classifier')
         max_score = 0
@@ -50,7 +51,7 @@ for index, value in enumerate(data_list):
                 try: #예외 처리
                     model =  algorithm()
                         
-                    scores = cross_val_score(model, x, y, cv = kfold)
+                    scores = cross_val_score(model, x_scaler, y, cv = kfold)
                     results =round(np.mean(scores),4)
                                 
                     if max_score < results :
