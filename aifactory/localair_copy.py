@@ -34,11 +34,11 @@ X_train = scaler.fit_transform(X_train)
 X_val = scaler.transform(X_val)
 
 # Apply Local Outlier Factor
-lof = LocalOutlierFactor(n_neighbors=12, contamination=0.01)
+lof = LocalOutlierFactor(n_neighbors=15, contamination=0.01)
 y_pred_train = lof.fit_predict(X_train)
 
 # Tuning: Adjust the n_neighbors and contamination parameters
-lof_tuned = LocalOutlierFactor(n_neighbors=12, contamination=0.050)
+lof_tuned = LocalOutlierFactor(n_neighbors=15, contamination=0.01)
 y_pred_train_tuned = lof_tuned.fit_predict(X_train)
 
 # Predict anomalies in test data using tuned LOF
