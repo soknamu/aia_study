@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
-from sklearn.model_selection import KFold,StratifiedKFold
+from sklearn.model_selection import cross_val_score, KFold,StratifiedKFold
 import warnings
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
@@ -14,21 +14,21 @@ seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
 np.random.seed(seed)
 
-#1.데이터
-path = './_data/kaggle_bike/' #맨뒤에/오타
+# 1. 데이터
+# 1.1 경로, 가져오기
+path = './_data/ddarung/'
+path_save = './_save/ddarung/'
 
-train_csv = pd.read_csv(path + 'train.csv', index_col= 0)
-test_csv = pd.read_csv(path + 'test.csv', index_col= 0)
+train_csv = pd.read_csv(path + 'train.csv', index_col=0)
+test_csv = pd.read_csv(path + 'test.csv', index_col=0)
 
-# print(train_csv.shape) #(10886, 11)
-# print(test_csv.shape) #(6493, 8)
+# 1.3 결측지 제거
+print(train_csv.isnull().sum())
+train_csv = train_csv.dropna()
+print(train_csv.isnull().sum())
 
-#결측치 제거
-
-#print(train_csv.isnull().sum()) #결측치 없음
-
-x = train_csv.drop(['count','casual','registered'], axis =1)
-
+# 1.4 x, y 분리
+x = train_csv.drop(['count'], axis=1)
 y = train_csv['count']
 
 x_train, x_test, y_train, y_test = train_test_split(
@@ -38,14 +38,6 @@ x_train, x_test, y_train, y_test = train_test_split(
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
 
-# parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
-#             {'min_samples_leaf' : [3, 10]},
-#     {'min_sample_split' : [2, 3, 10]}, 
-#     {'max_depth' : [6, 8, 12]}, 
-#     {'min_samples_leaf' : [3, 5, 7, 10]},
-#     {'n_estimators' : [100, 200, 400]},
-#     {'min_sample_split' : [2, 3, 10]},
-# ]
 parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
             {'min_samples_leaf' : [3, 10]},
     {'min_samples_split' : [2, 3, 10]}, 
@@ -83,10 +75,10 @@ print('최적 튠 ACC :', r2_score(y_test,y_predict_best))
 
 print(f'runtime : {time.time()-start}')
 
-# 최적의 매개변수 :  RandomForestRegressor(max_depth=10)
-# 최적의 파라미터 :  {'max_depth': 10}
-# 최적의 점수 :  0.3462846021396971
-# model_score : 0.3518872121251956
-# r2_score : 0.3518872121251956
-# 최적 튠 ACC : 0.3518872121251956
-# runtime : 47.64957666397095
+# 최적의 매개변수 :  RandomForestRegressor()
+# 최적의 파라미터 :  {'min_samples_split': 2}
+# 최적의 점수 :  0.7618256402095326
+# model_score : 0.7291481616042721
+# r2_score : 0.7291481616042721
+# 최적 튠 ACC : 0.7291481616042721
+# runtime : 15.202845573425293

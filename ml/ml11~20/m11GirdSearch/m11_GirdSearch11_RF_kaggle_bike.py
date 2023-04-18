@@ -4,7 +4,7 @@ from sklearn.metrics import r2_score
 from sklearn.model_selection import KFold,StratifiedKFold
 import warnings
 import pandas as pd
-from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
+from sklearn.model_selection import GridSearchCV
 import time
 import random
 from sklearn.model_selection import train_test_split
@@ -38,14 +38,6 @@ x_train, x_test, y_train, y_test = train_test_split(
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
 
-# parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
-#             {'min_samples_leaf' : [3, 10]},
-#     {'min_sample_split' : [2, 3, 10]}, 
-#     {'max_depth' : [6, 8, 12]}, 
-#     {'min_samples_leaf' : [3, 5, 7, 10]},
-#     {'n_estimators' : [100, 200, 400]},
-#     {'min_sample_split' : [2, 3, 10]},
-# ]
 parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
             {'min_samples_leaf' : [3, 10]},
     {'min_samples_split' : [2, 3, 10]}, 
@@ -56,7 +48,7 @@ parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]
 ]
 
 #2.모델
-model = RandomizedSearchCV(RandomForestRegressor(),parameters,
+model = GridSearchCV(RandomForestRegressor(),parameters,
                      cv=kfold,
                      verbose=1,
                      refit= True, # True는 최상의 파라미터 출력.
@@ -83,10 +75,10 @@ print('최적 튠 ACC :', r2_score(y_test,y_predict_best))
 
 print(f'runtime : {time.time()-start}')
 
-# 최적의 매개변수 :  RandomForestRegressor(min_samples_leaf=5)
-# 최적의 파라미터 :  {'min_samples_leaf': 5}
-# 최적의 점수 :  0.34450648957736213
-# model_score : 0.34818234690088734
-# r2_score : 0.34818234690088734
-# 최적 튠 ACC : 0.34818234690088734
-# runtime : 19.873515367507935
+# 최적의 매개변수 :  RandomForestRegressor(max_depth=10)
+# 최적의 파라미터 :  {'max_depth': 10}
+# 최적의 점수 :  0.3462846021396971
+# model_score : 0.3518872121251956
+# r2_score : 0.3518872121251956
+# 최적 튠 ACC : 0.3518872121251956
+# runtime : 47.64957666397095

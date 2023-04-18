@@ -1,10 +1,10 @@
 import numpy as np
 from sklearn.datasets import load_breast_cancer
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import cross_val_score, KFold, StratifiedKFold
+from sklearn.model_selection import  KFold, StratifiedKFold
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV,RandomizedSearchCV
 import time
 import random
 import pandas as pd
@@ -22,14 +22,6 @@ x_train, x_test, y_train, y_test = train_test_split(
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
 
-# parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
-#             {'min_samples_leaf' : [3, 10]},
-#     {'min_sample_split' : [2, 3, 10]}, 
-#     {'max_depth' : [6, 8, 12]}, 
-#     {'min_samples_leaf' : [3, 5, 7, 10]},
-#     {'n_estimators' : [100, 200, 400]},
-#     {'min_sample_split' : [2, 3, 10]},
-# ]
 parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
             {'min_samples_leaf' : [3, 10]},
     {'min_samples_split' : [2, 3, 10]}, 
@@ -40,7 +32,7 @@ parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]
 ]
 
 #2.모델
-model = GridSearchCV(RandomForestClassifier(),parameters,
+model = RandomizedSearchCV(RandomForestClassifier(),parameters,
                      cv=kfold,
                      verbose=1,
                      refit= True, # True는 최상의 파라미터 출력.
@@ -73,4 +65,4 @@ print(f'runtime : {time.time()-start}')
 # model_score : 0.9590643274853801
 # accuracy_score : 0.9590643274853801
 # 최적 튠 ACC : 0.9590643274853801
-# runtime : 9.376745700836182
+# runtime : 4.906214952468872

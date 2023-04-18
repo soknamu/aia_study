@@ -26,14 +26,6 @@ x_train, x_test, y_train, y_test = train_test_split(
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
 
-# parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
-#             {'min_samples_leaf' : [3, 10]},
-#     {'min_sample_split' : [2, 3, 10]}, 
-#     {'max_depth' : [6, 8, 12]}, 
-#     {'min_samples_leaf' : [3, 5, 7, 10]},
-#     {'n_estimators' : [100, 200, 400]},
-#     {'min_sample_split' : [2, 3, 10]},
-# ]
 parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
             {'min_samples_leaf' : [3, 10]},
     {'min_samples_split' : [2, 3, 10]}, 

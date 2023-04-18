@@ -3,12 +3,12 @@
 #[분류]
 
 import numpy as np
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
-from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import RandomizedSearchCV,HalvingGridSearchCV
 import time
 import random
 import pandas as pd
@@ -17,7 +17,7 @@ seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
 np.random.seed(seed)
 #1. 데이터
-x, y = load_iris(return_X_y=True)
+x, y = load_wine(return_X_y=True)
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size= 0.7, shuffle=True, random_state = seed,
@@ -26,14 +26,6 @@ x_train, x_test, y_train, y_test = train_test_split(
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
 
-# parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
-#             {'min_samples_leaf' : [3, 10]},
-#     {'min_sample_split' : [2, 3, 10]}, 
-#     {'max_depth' : [6, 8, 12]}, 
-#     {'min_samples_leaf' : [3, 5, 7, 10]},
-#     {'n_estimators' : [100, 200, 400]},
-#     {'min_sample_split' : [2, 3, 10]},
-# ]
 parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
             {'min_samples_leaf' : [3, 10]},
     {'min_samples_split' : [2, 3, 10]}, 
@@ -44,9 +36,10 @@ parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]
 ]
 
 #2.모델
-model = GridSearchCV(RandomForestClassifier(),parameters,
+model = HalvingGridSearchCV(RandomForestClassifier(),parameters,
                      cv=kfold,
                      verbose=1,
+                     factor=3.5,
                      refit= True, # True는 최상의 파라미터 출력.
                      n_jobs=-1)
 
@@ -71,11 +64,10 @@ print('최적 튠 ACC :', accuracy_score(y_test,y_predict_best))
 
 print(f'runtime : {time.time()-start}')
 
-# Fitting 5 folds for each of 25 candidates, totalling 125 fits
-# 최적의 매개변수 :  RandomForestClassifier(min_samples_leaf=3)
-# 최적의 파라미터 :  {'min_samples_leaf': 3}
-# 최적의 점수 :  0.9619047619047618
-# model_score : 0.9777777777777777
-# accuracy_score : 0.9777777777777777
-# 최적 튠 ACC : 0.9777777777777777   
-# runtime : 7.228323936462402  
+# 최적의 매개변수 :  RandomForestClassifier(max_depth=6)
+# 최적의 파라미터 :  {'max_depth': 6}
+# 최적의 점수 :  0.9888888888888889
+# model_score : 0.9814814814814815
+# accuracy_score : 0.9814814814814815
+# 최적 튠 ACC : 0.9814814814814815
+# runtime : 9.2962167263031

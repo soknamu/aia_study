@@ -7,8 +7,8 @@ from sklearn.datasets import load_wine
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import accuracy_score
-from sklearn.svm import SVC
-from sklearn.model_selection import RandomizedSearchCV
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingRandomSearchCV
 import time
 import random
 import pandas as pd
@@ -26,14 +26,6 @@ x_train, x_test, y_train, y_test = train_test_split(
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
 
-# parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
-#             {'min_samples_leaf' : [3, 10]},
-#     {'min_sample_split' : [2, 3, 10]}, 
-#     {'max_depth' : [6, 8, 12]}, 
-#     {'min_samples_leaf' : [3, 5, 7, 10]},
-#     {'n_estimators' : [100, 200, 400]},
-#     {'min_sample_split' : [2, 3, 10]},
-# ]
 parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]}, 
             {'min_samples_leaf' : [3, 10]},
     {'min_samples_split' : [2, 3, 10]}, 
@@ -44,9 +36,10 @@ parameters = [{'n_estimators' : [100, 200, 300]}, {'max_depth' : [6, 10, 15, 12]
 ]
 
 #2.모델
-model = RandomizedSearchCV(RandomForestClassifier(),parameters,
+model = HalvingRandomSearchCV(RandomForestClassifier(),parameters,
                      cv=kfold,
                      verbose=1,
+                     factor=3.5,
                      refit= True, # True는 최상의 파라미터 출력.
                      n_jobs=-1)
 
@@ -73,8 +66,8 @@ print(f'runtime : {time.time()-start}')
 
 # 최적의 매개변수 :  RandomForestClassifier(n_estimators=300)
 # 최적의 파라미터 :  {'n_estimators': 300}
-# 최적의 점수 :  0.9756666666666666
+# 최적의 점수 :  0.9704761904761906
 # model_score : 0.9814814814814815
 # accuracy_score : 0.9814814814814815
 # 최적 튠 ACC : 0.9814814814814815
-# runtime : 5.041926145553589
+# runtime : 5.08860969543457
