@@ -1,8 +1,4 @@
 import numpy as np
-from sklearn.datasets import load_iris,load_breast_cancer,load_digits,fetch_covtype,load_wine
-from sklearn.svm import LinearSVC
-from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import cross_val_score, KFold
