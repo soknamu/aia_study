@@ -32,10 +32,6 @@ scaler_name_list = ['MinMaxScaler',
 n_splits=5
 kfold = KFold(n_splits = n_splits, shuffle = True, random_state = 413)
 
-max_score = 0
-max_name = '최대값'
-max_scaler = 'max'
-
 #1. 데이터
 for index, value in enumerate(data_list):
     x, y = value
@@ -63,3 +59,22 @@ for index, value in enumerate(data_list):
                 continue
         print('Scaler:', max_scaler, 'Model:', max_name, 'Score:', max_score)
     print("======================================================")
+    
+# ================== boston ======================
+# Scaler: MinMaxScaler Model: GradientBoostingRegressor Score: 0.8213
+# Scaler: StandardScaler Model: GradientBoostingRegressor Score: 0.8188
+# Scaler: MaxAbsScaler Model: GradientBoostingRegressor Score: 0.8227
+# Scaler: RobustScaler Model: GradientBoostingRegressor Score: 0.8188
+# ======================================================
+# ================== california ======================
+# Scaler: MinMaxScaler Model: HistGradientBoostingRegressor Score: 0.8135
+# Scaler: StandardScaler Model: HistGradientBoostingRegressor Score: 0.8135
+# Scaler: MaxAbsScaler Model: HistGradientBoostingRegressor Score: 0.8135
+# Scaler: RobustScaler Model: HistGradientBoostingRegressor Score: 0.8135
+# ======================================================
+# ================== diabetes ======================
+# Scaler: MinMaxScaler Model: OrthogonalMatchingPursuitCV Score: 0.4695
+# Scaler: StandardScaler Model: OrthogonalMatchingPursuitCV Score: 0.4695
+# Scaler: MaxAbsScaler Model: OrthogonalMatchingPursuitCV Score: 0.4695
+# Scaler: RobustScaler Model: AdaBoostRegressor Score: 0.472
+# ======================================================

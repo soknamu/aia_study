@@ -3,7 +3,6 @@ from sklearn.datasets import load_iris
 from sklearn.model_selection import cross_val_predict,cross_val_score
 from sklearn.model_selection import train_test_split,KFold
 from sklearn.metrics import accuracy_score
-from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 #1. 데이터
 x,y = load_iris(return_X_y= True)
