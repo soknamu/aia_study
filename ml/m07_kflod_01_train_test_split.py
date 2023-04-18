@@ -10,7 +10,7 @@ x,y = load_iris(return_X_y= True)
 x_train, x_test, y_train, y_test = train_test_split(
     x,y, shuffle=True, random_state=337,train_size= 0.7)
 
-n_splits = 5
+n_splits = 5 #-> 70% * 5 = 350 훈련
 kfold = KFold(n_splits= n_splits, shuffle= True, random_state= 337) #위의 split random_state와 무조건 같은 필요는 없음.
 
 #2. 모델
