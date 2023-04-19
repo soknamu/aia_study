@@ -58,6 +58,7 @@ print(type(train_csv))      # <class 'pandas.core.frame.DataFrame'>
 
 ######################### train_csv데이터에서 x와 y를 분리 ##############################
 x = train_csv.drop(['count'], axis=1)
+
 print(x)
 
 y = train_csv['count']
