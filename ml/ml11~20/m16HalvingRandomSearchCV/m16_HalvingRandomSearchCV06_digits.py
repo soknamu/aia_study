@@ -54,7 +54,7 @@ print(f'runtime : {time.time()-start}')
 #print(x.shape, x_train.shape) #(1797, 64) (1437, 64)
 #훈련의 전체의 max_resources(최대자원 1437=x_train 값.), max_resources(최소자원)
 #factor로 나눠서 52 / 3(factor) = 18(상위) -> resources100 *3 (factor) -> 300
-#factor : default = 3, 
+#factor : default = 3 
 
 print("최적의 매개변수 : " , model.best_estimator_) #내가 쓴것만 나옴.
 

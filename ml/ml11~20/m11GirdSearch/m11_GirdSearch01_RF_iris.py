@@ -16,12 +16,17 @@ from sklearn.ensemble import RandomForestClassifier
 seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
 np.random.seed(seed)
+
 #1. 데이터
 x, y = load_iris(return_X_y=True)
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size= 0.7, shuffle=True, random_state = seed,
 )
+from sklearn.preprocessing import RobustScaler
+scaler = RobustScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
 
 n_splits = 5
 kfold = StratifiedKFold(n_splits=n_splits, random_state= 56, shuffle= True)
