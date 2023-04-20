@@ -38,7 +38,7 @@ lof = LocalOutlierFactor(n_neighbors=20, contamination=0.1)
 y_pred_train = lof.fit_predict(X_train)
 
 # Tuning: Adjust the n_neighbors and contamination parameters
-lof_tuned = LocalOutlierFactor(n_neighbors=37, contamination=0.052)
+lof_tuned = LocalOutlierFactor(n_neighbors=36, contamination=0.048)
 y_pred_train_tuned = lof_tuned.fit_predict(X_train)
 
 # Predict anomalies in test data using tuned LOF
@@ -50,5 +50,5 @@ submission['label'] = pd.DataFrame({'Prediction': lof_predictions})
 print(submission.value_counts())
 #time
 date = datetime.datetime.now()
-date = date.strftime("%m%d_%H%M")
+date = date.strftime("%m%d_%H%M%S")
 submission.to_csv(save_path + 'air_' + date + '.csv', index=False)
