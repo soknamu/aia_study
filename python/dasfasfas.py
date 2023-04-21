@@ -51,20 +51,24 @@ y_pred_train = lof.fit_predict(X_train_norm)
 X_train_norm = X_train_norm[y_pred_train == 1]
 
 # Define model architecture
+from tensorflow.keras import regularizers
 model = Sequential()
-model.add(Dense(128, activation='relu', input_dim=X_train_norm.shape[1]))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(64, activation='relu'))
-model.add(Dense(X_train_norm.shape[1], activation='linear'))
+model.add(Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.001), input_dim=X_train_norm.shape[1]))
+model.add(Dropout(0.2))
+model.add(Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001)))
+model.add(Dropout(0.2))
+model.add(Dense(X_train_norm.shape[1], activation='linear', kernel_regularizer=regularizers.l2(0.001)))
 
 # Compile model
 model.compile(loss='mse', optimizer='adam')
 
 # Define early stopping callback
-early_stop = EarlyStopping(monitor='val_loss', patience=500)
+early_stop = EarlyStopping(monitor='val_loss', patience=300)
 
 # Train model
-history = model.fit(X_train_norm, X_train_norm, epochs=50000, batch_size=50, validation_data=(X_val_norm, X_val_norm), callbacks=[early_stop])
+history = model.fit(X_train_norm, X_train_norm, epochs=50000, batch_size=23, validation_data=(X_val_norm, X_val_norm), callbacks=[early_stop])
 
 # Predict anomalies on test data
 test_preds = model.predict(test_data_norm)
@@ -75,7 +79,7 @@ y_pred_test_lof = lof.fit_predict(test_data_norm)
 lof_predictions = [1 if x == -1 else 0 for x in y_pred_test_lof]
 
 # Label anomalies as 1 and non-anomalies as 0
-y_pred = np.where((errors >= np.percentile(errors, 88)) | (lof_predictions == 1), 1, 0)
+y_pred = np.where((errors >= np.percentile(errors, 80)) | (lof_predictions == 1), 1, 0)
 
 # Save submission file
 submission['label'] = pd.DataFrame({'Prediction': y_pred})
