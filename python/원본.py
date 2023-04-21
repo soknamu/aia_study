@@ -3,8 +3,8 @@ import numpy as np
 import datetime
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.models import Sequential,Model
+from tensorflow.keras.layers import Dense, Dropout, Input,concatenate
 from tensorflow.keras.callbacks import EarlyStopping
 
 # Load data
@@ -36,19 +36,53 @@ X_val_norm = scaler.transform(X_val)
 test_data_norm = scaler.transform(test_data[features])
 
 # Define model architecture
-model = Sequential()
-model.add(Dense(32, activation='relu', input_dim=X_train_norm.shape[1]))
-model.add(Dense(16, activation='relu'))
-model.add(Dense(X_train_norm.shape[1], activation='linear'))
+from tensorflow.keras import regularizers
+from tensorflow.keras.layers import BatchNormalization
+input1 = Input(shape=X_train_norm.shape[1:])
+######################################################################################
+layer1 = Dense(64, activation='relu')(input1)
+layer1 = Dense(32, activation='relu')(layer1)
+layer1 = Dense(16, activation='relu')(layer1)
+######################################################################################
+layer2=Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.001))(input1)
+layer2 =Dropout(0.125)(layer2)
+layer2=BatchNormalization()(layer2)
+layer2=Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=BatchNormalization()(layer2)
+layer2=Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=BatchNormalization()(layer2)
+layer2=Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(8, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(4, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(32, activation='relu', input_dim=X_train_norm.shape[1])(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(16, activation='relu')(layer2)
+#####################################################################################
+merged=concatenate((layer1,layer2))
+merged=Dense(128, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+merged=Dense(64, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+merged=Dense(64, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+merged=Dense(64, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+output=Dense(X_train_norm.shape[1], activation='linear')(merged)
 
+model=Model(inputs=(input1,),outputs=output)
 # Compile model
 model.compile(loss='mse', optimizer='adam')
 
 # Define early stopping callback
-early_stop = EarlyStopping(monitor='val_loss', patience=10)
+early_stop = EarlyStopping(monitor='val_loss', patience=100)
 
 # Train model
-history = model.fit(X_train_norm, X_train_norm, epochs=50, batch_size=32, validation_data=(X_val_norm, X_val_norm), callbacks=[early_stop])
+history = model.fit(X_train_norm, X_train_norm, epochs=5000, batch_size=32, validation_data=(X_val_norm, X_val_norm), callbacks=[early_stop])
 
 # Predict anomalies on test data
 test_preds = model.predict(test_data_norm)
