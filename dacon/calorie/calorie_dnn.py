@@ -69,7 +69,7 @@ model.add(Dense(1))
 
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', patience=1242, verbose=1, mode='min', restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', patience=1500, verbose=1, mode='min', restore_best_weights=True)
 hist = model.fit(x_train, y_train, epochs=100000, batch_size=20, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
