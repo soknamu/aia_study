@@ -1,5 +1,6 @@
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import train_test_split,KFold,HalvingRandomSearchCV
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import RobustScaler
@@ -8,6 +9,7 @@ from lightgbm import LGBMRegressor
 from sklearn.ensemble import StackingRegressor
 import pandas as pd
 from sklearn.preprocessing import RobustScaler
+from sklearn.preprocessing import PolynomialFeatures
 # Set random seed
 np.random.seed(27)
 
@@ -29,25 +31,45 @@ test_csv['Gender'] = le2.transform(test_csv['Gender'])
 # Split data into training and testing sets
 x = train_csv.drop(['Calories_Burned'], axis=1)
 y = train_csv['Calories_Burned']
-x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.8, shuffle=True, random_state=27)
+x_train, x_test, y_train, y_test = train_test_split(x, y, train_size=0.7, shuffle=True, random_state=27)
 
-scaler = RobustScaler()
-X_train = scaler.fit_transform(x_train)
-X_test = scaler.transform(x_test)
+# scaler = RobustScaler()
+# X_train = scaler.fit_transform(x_train)
+# X_test = scaler.transform(x_test)
+n_splits = 5
+kfold = KFold(n_splits=n_splits, shuffle = True, random_state = 777)
 
 # Define the base models
 xgb_model = XGBRegressor(n_estimators=500, max_depth=5, learning_rate=0.1, colsample_bytree=0.8, subsample=0.8)
 lgbm_model = LGBMRegressor(n_estimators=500, max_depth=5, learning_rate=0.1, colsample_bytree=0.8, subsample=0.8)
 
-# Define the stacking ensemble model
-estimators = [('xgb', xgb_model), ('lgbm', lgbm_model)]
-stack_model = StackingRegressor(estimators=estimators, final_estimator=XGBRegressor(n_estimators=1000, max_depth=5, learning_rate=0.1, colsample_bytree=0.8, subsample=0.8))
+from scipy.stats import randint, uniform
+
+xgb_params = {'n_estimators': randint(100, 1000),
+'max_depth': randint(3, 10),
+'learning_rate': uniform(0.01, 0.3),
+'colsample_bytree': uniform(0.5, 0.45),
+'subsample': uniform(0.5, 0.45)}
+
+lgbm_params = {'n_estimators': randint(100, 1000),
+'max_depth': randint(3, 10),
+'learning_rate': uniform(0.01, 0.3),
+'colsample_bytree': uniform(0.5, 0.45),
+'subsample': uniform(0.5, 0.45)}
+
+xgb_search = HalvingRandomSearchCV(XGBRegressor(), xgb_params, random_state=27, n_jobs=-1, verbose=1)
+lgbm_search = HalvingRandomSearchCV(LGBMRegressor(), lgbm_params, random_state=27, n_jobs=-1, verbose=1)
+
+estimators = [('xgb', xgb_search), ('lgbm', lgbm_search)]
+stack_model = StackingRegressor(estimators=estimators, cv=kfold, final_estimator=LGBMRegressor(n_estimators=1000, max_depth=5, learning_rate=0.1, colsample_bytree=0.8, subsample=0.8))
+
+poly_model = make_pipeline(PolynomialFeatures(degree=2), RobustScaler(), stack_model)
 
 # Train the model
-stack_model.fit(x_train, y_train)
+poly_model.fit(x_train, y_train)
 
 # Evaluate the model
-y_predict = stack_model.predict(x_test)
+y_predict = poly_model.predict(x_test)
 r2 = r2_score(y_test, y_predict)
 print("R2 score: ", r2)
 
@@ -60,7 +82,7 @@ print("RMSE: ", rmse)
 # Generate predictions on test data and save to submission file
 import datetime
 date = datetime.datetime.now().strftime('%m%d_%H%M%S')
-y_sub = stack_model.predict(test_csv)
+y_sub = poly_model.predict(test_csv)
 sample_submission_csv = pd.read_csv(path + 'sample_submission.csv')
 sample_submission_csv[sample_submission_csv.columns[-1]] = y_sub
 sample_submission_csv.to_csv(path_save + 'calorie_' + date + '.csv', index=False)

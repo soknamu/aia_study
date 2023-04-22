@@ -7,8 +7,8 @@ from sklearn.pipeline import make_pipeline
 import random
 import pandas as pd
 from tensorflow.python.keras.callbacks import EarlyStopping
-from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Dropout,LeakyReLU, BatchNormalization
+from tensorflow.python.keras.models import Sequential,Model
+from tensorflow.python.keras.layers import Dense, Dropout,LeakyReLU, Input,concatenate
 #1.데이터
 seed = 27 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
@@ -46,30 +46,69 @@ x_train, x_test, y_train, y_test = train_test_split(
 # print(x_train.shape,y_train.shape)
 # print(x_test.shape,y_test.shape)
 
-scaler = RobustScaler()
+scaler = MinMaxScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 test_csv = scaler.transform(test_csv)
 
 # 2. 모델구성
-model = Sequential()
-model.add(Dense(128, input_dim=9,activation= LeakyReLU(0.5)))
-model.add(Dropout(0.125))
-model.add(Dense(64,activation= LeakyReLU(0.5)))
-model.add(Dropout(0.125))
-model.add(Dense(256,activation= LeakyReLU(0.55)))
-model.add(Dropout(0.125))
-model.add(Dense(64,activation= LeakyReLU(0.5)))
-model.add(Dropout(0.125))
-model.add(Dense(32,activation= LeakyReLU(0.5)))
-model.add(Dropout(0.125))
-model.add(Dense(8,activation= LeakyReLU(0.5)))
-model.add(Dropout(0.125))
-model.add(Dense(1))
+# model = Sequential()
+# model.add(Dense(128, input_dim=9,activation= LeakyReLU(0.5)))
+# model.add(Dropout(0.125))
+# model.add(Dense(64,activation= LeakyReLU(0.5)))
+# model.add(Dropout(0.125))
+# model.add(Dense(256,activation= LeakyReLU(0.55)))
+# model.add(Dropout(0.125))
+# model.add(Dense(64,activation= LeakyReLU(0.5)))
+# model.add(Dropout(0.125))
+# model.add(Dense(32,activation= LeakyReLU(0.5)))
+# model.add(Dropout(0.125))
+# model.add(Dense(8,activation= LeakyReLU(0.5)))
+# model.add(Dropout(0.125))
+# model.add(Dense(1))
+
+from tensorflow.keras import regularizers
+from tensorflow.keras.layers import BatchNormalization
+input1 = Input(shape=(9,))
+
+######################################################################################
+layer1 = Dense(64, activation='relu')(input1)
+layer1 = Dense(32, activation='relu')(layer1)
+layer1 = Dense(16, activation='relu')(layer1)
+######################################################################################
+layer2=Dense(128, activation='relu', kernel_regularizer=regularizers.l2(0.001))(input1)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(64, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(32, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(16, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(8, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(4, activation='relu', kernel_regularizer=regularizers.l2(0.001))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(32, activation='relu', input_dim=(9,))(layer2)
+layer2 =Dropout(0.125)(layer2)
+layer2=Dense(16, activation='relu')(layer2)
+#####################################################################################
+merged=concatenate((layer1,layer2))
+merged=Dense(128, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+merged=Dense(64, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+merged=Dense(64, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+merged=Dense(64, activation='relu')(merged)
+merged =Dropout(0.125)(merged)
+#output=Dense(shape=(9,), activation='linear')(merged)
+output = Dense(units=1, activation='linear')(merged)
+
+model=Model(inputs=(input1,),outputs=output)
 
 # 3. 컴파일, 훈련
 model.compile(loss='mse', optimizer='adam')
-es = EarlyStopping(monitor='val_loss', patience=1500, verbose=1, mode='min', restore_best_weights=True)
+es = EarlyStopping(monitor='val_loss', patience=10, verbose=1, mode='min', restore_best_weights=True)
 hist = model.fit(x_train, y_train, epochs=100000, batch_size=20, verbose=1, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
@@ -82,8 +121,8 @@ y_predict = model.predict(x_test)
 r2 = r2_score(y_test,y_predict)
 print("r2_score : ", r2)
 
-def RMSE(y_test, y_predict) : #함수의 약자 RMSE 임의의 값. 함수는 y= f(x)라는 식으로 계속 이용함.
-   return np.sqrt(mean_squared_error(y_test,y_predict))   #리턴(나오는 값)해주면 된다. 함수를 정의 한 것. 
+def RMSE(y_test, y_predict) :
+   return np.sqrt(mean_squared_error(y_test,y_predict))
 
 
 rmse = RMSE(y_test, y_predict)  #실행 코드 RMSE 함수 사용
