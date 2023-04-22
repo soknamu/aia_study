@@ -10,6 +10,8 @@ from sklearn.ensemble import StackingRegressor
 import pandas as pd
 from sklearn.preprocessing import RobustScaler
 import random
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF
 # Set random seed
 seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
@@ -50,7 +52,8 @@ lgbm_model = LGBMRegressor(n_estimators=500,
                            learning_rate=0.1, 
                            colsample_bytree=0.8, 
                            subsample=0.8)
-
+gaussian = GaussianProcessRegressor(#alpha=
+                                    )
 from scipy.stats import randint, uniform
 
 xgb_params = {'n_estimators': np.random.randint(100, 1000, size=10), 
@@ -65,7 +68,11 @@ lgbm_params = {'n_estimators': np.random.randint(100, 1000, size=10),
                'colsample_bytree': np.random.uniform(0.5, 0.95, size=10), 
                'subsample': np.random.uniform(0.5, 0.95, size=10)}
 
-xgb_search = HalvingRandomSearchCV(XGBRegressor(), xgb_params, 
+gaussian_params = {'alpha': np.random.uniform(1e-10, 1e-5, size=10),
+'kernel': [RBF(length_scale=x) for x in np.random.uniform(0.1, 1, size=10)],
+'n_restarts_optimizer': np.random.randint(3, 10, size=10)}
+
+xgb_search = HalvingRandomSearchCV(XGBRegressor(), xgb_params,
                                    random_state=seed, 
                                    n_jobs=-1, verbose=1)
 lgbm_search = HalvingRandomSearchCV(LGBMRegressor(), lgbm_params, 
@@ -73,7 +80,11 @@ lgbm_search = HalvingRandomSearchCV(LGBMRegressor(), lgbm_params,
                                     n_jobs=-1, 
                                     verbose=1)
 
-estimators = [('xgb', xgb_search), ('lgbm', lgbm_search)]
+gusi_search = HalvingRandomSearchCV(GaussianProcessRegressor(), gaussian_params,
+                                    random_state=seed,)
+
+estimators = [('xgb', xgb_search), ('lgbm', lgbm_search), ('gau', gaussian)]
+
 stack_model = StackingRegressor(estimators=estimators,
                                 cv=kfold, 
                                 final_estimator=LGBMRegressor(n_estimators=1000, 

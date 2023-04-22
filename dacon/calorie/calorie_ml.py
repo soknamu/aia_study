@@ -10,6 +10,7 @@ from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRFRegressor
 import random
 import pandas as pd
+from sklearn.gaussian_process import GaussianProcessRegressor
 #1.데이터
 seed = 27 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
@@ -44,7 +45,7 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size=0.8, shuffle= True, random_state=seed
 )
 
-model = make_pipeline(RobustScaler(), DecisionTreeRegressor())
+model = make_pipeline(RobustScaler(), GaussianProcessRegressor())
 
 # 3. 훈련
 model.fit(x_train,y_train)
