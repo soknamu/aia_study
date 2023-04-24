@@ -1,3 +1,4 @@
+
 # 10개 데이터셋
 # 10개의 파일을 만든다.
 #[실습/과제] 피처를 한개씩 삭제하고 성능비교.
@@ -22,20 +23,26 @@ x_train, x_test, y_train, y_test = train_test_split(
 )
 
 #2. 모델
-model = RandomForestClassifier()
+model_list = [RandomForestClassifier(),
+GradientBoostingClassifier(),
+DecisionTreeClassifier(),
+XGBClassifier()]
 
 # 3. 훈련
-model.fit(x_train,y_train)
+for model, value in enumerate(model_list) :
+    model = value
+    model.fit(x_train,y_train)
 
-#4. 평가, 예측
-result = model.score(x_test,y_test)
-print("acc : ", result)
+    #4. 평가, 예측
+    result = model.score(x_test,y_test)
+    print("acc : ", result)
 
-y_predict = model.predict(x_test)
-acc = accuracy_score(y_test,y_predict)
-print("accuracy_score : ", acc)
-print("=====================================================")
-print(type(model).__name__, ":", model.feature_importances_)
+    y_predict = model.predict(x_test)
+    acc = accuracy_score(y_test,y_predict)
+    print("accuracy_score : ", acc)
+    print("=====================================================")
+    print(type(model).__name__, ":", model.feature_importances_)
+
 # 지우기전
 # RandomForestClassifier : [0.10431864 0.02218342 0.35323494 0.52026301] 0.9
 
