@@ -8,6 +8,7 @@ from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 import pandas as pd
 import random
+from sklearn.decomposition import PCA
 #1.데이터
 seed = 0 #random state 0넣는 거랑 비슷함.
 random.seed(seed)
@@ -30,3 +31,20 @@ y = train_csv['count']
 
 x_train, x_test, y_train, y_test = train_test_split(
     x, y, train_size=0.7, shuffle= True, random_state=27)
+
+pca = PCA(n_components= 3)
+x_train = pca.fit_transform(x_train)
+x_test = pca.transform(x_test)
+
+#2. 모델
+
+model = RandomForestRegressor(random_state=123)
+
+#3. 훈련
+model.fit(x_train,y_train)
+
+#4. 결과
+results = model.score(x_test, y_test)
+print("결과는  :", results)
+
+# 결과는  : 0.20940544762290725

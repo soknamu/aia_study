@@ -37,7 +37,7 @@ kfold = KFold(n_splits=n_splits, shuffle=True, random_state=413)
 #tree_method = 'gpu_hist'
 #predictor = gpu_predictor
 #gpu_id = 0
-    
+
 #2.모델
 model = RandomizedSearchCV(XGBClassifier(),parameters,
                         n_jobs=-1,
@@ -56,3 +56,6 @@ print("acc : ", result)
 y_predict = model.predict(x_test)
 acc = accuracy_score(y_test,y_predict)
 print("accuracy_score : ", acc)
+
+# acc :  0.8983
+# accuracy_score :  0.8983
