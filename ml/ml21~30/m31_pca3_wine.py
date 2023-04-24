@@ -31,3 +31,17 @@ for i in range(13, 0, -1):
     # 4. 결과
     results = model.score(x_test, y_test)
     print("n_components={}: 결과는 {}".format(i, results))
+    
+# n_components=13: 결과는 0.8888888888888888
+# n_components=12: 결과는 0.9444444444444444
+# n_components=11: 결과는 0.9166666666666666
+# n_components=10: 결과는 0.8888888888888888
+# n_components=9: 결과는 0.9166666666666666
+# n_components=8: 결과는 0.9166666666666666
+# n_components=7: 결과는 0.9166666666666666
+# n_components=6: 결과는 0.9166666666666666
+# n_components=5: 결과는 0.9166666666666666
+# n_components=4: 결과는 0.8888888888888888
+# n_components=3: 결과는 0.7222222222222222
+# n_components=2: 결과는 0.6388888888888888
+# n_components=1: 결과는 0.6111111111111112
