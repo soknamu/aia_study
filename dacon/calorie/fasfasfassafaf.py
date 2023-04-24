@@ -89,7 +89,7 @@ for i in range(1000):
     
     def objective(trial):
         alpha = trial.suggest_loguniform('alpha', 0.0000001, 0.1)
-        n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 1, 20)
+        n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 1, 70)
         optimizer = trial.suggest_categorical('optimizer', ['fmin_l_bfgs_b', 'Powell', 'CG'])
 
         model = GaussianProcessRegressor(

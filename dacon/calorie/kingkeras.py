@@ -10,7 +10,6 @@ import datetime
 import warnings
 warnings.filterwarnings('ignore')
 
-poly = PolynomialFeatures(degree=2, include_bias=False)
 
 def RMSE(x, y):
     return np.sqrt(mean_squared_error(x, y))
@@ -53,7 +52,7 @@ x = pd.DataFrame(scaler.fit_transform(x))
 test_csv = pd.DataFrame(scaler.transform(test_csv))
 
 for i in range(10000):
-    kf = KFold(n_splits=8, shuffle=True, random_state=i)
+    kf = KFold(n_splits=4, shuffle=True, random_state=i)
 
     for train_idx, test_idx in kf.split(x):
         x_train, x_test = x.iloc[train_idx], x.iloc[test_idx]
@@ -62,7 +61,7 @@ for i in range(10000):
     
         def objective(trial):
             alpha = trial.suggest_loguniform('alpha', 0.0000001, 0.1)
-            n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 1, 60)
+            n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 1, 80)
             optimizer = trial.suggest_categorical('optimizer', ['fmin_l_bfgs_b', 'Powell', 'CG'])
 
             model = GaussianProcessRegressor(
@@ -78,14 +77,14 @@ for i in range(10000):
             y_pred = np.round(model.predict(x_test))
             rmse = RMSE(y_test, y_pred)
             print('GPR RMSE : ', rmse)
-            if rmse < 0.21:
+            if rmse < 0.22:
                 submit_csv['Calories_Burned'] = np.round(model.predict(test_csv))
                 date = datetime.datetime.now()
                 date = date.strftime('%m%d_%H%M%S')
-                submit_csv.to_csv(path_save + date + str(round(rmse, 5)) + '.csv')
+                submit_csv.to_csv(path_save + date + str(round(rmse, 3)) + '.csv')
             return rmse
         opt = optuna.create_study(direction='minimize')
-        opt.optimize(objective, n_trials=20)
+        opt.optimize(objective, n_trials=25)
         print('best param : ', opt.best_params, 'best rmse : ', opt.best_value)
         
 #가우시안
