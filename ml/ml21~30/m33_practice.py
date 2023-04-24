@@ -2,7 +2,7 @@ import numpy as np
 from tensorflow.keras.datasets import mnist
 from sklearn.decomposition import PCA
 from tensorflow.python.keras.models import Sequential
-from tensorflow.python.keras.layers import Dense, Conv2D, Flatten
+from tensorflow.python.keras.layers import Dense
 import pandas as pd
 from sklearn.metrics import accuracy_score
 #1.데이터

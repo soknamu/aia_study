@@ -40,7 +40,7 @@ model.summary()
 # 3. 컴파일, 훈련
 model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='val_acc', mode='max', patience=10, verbose=1, restore_best_weights=True)
-hist = model.fit(x_train, y_train, epochs=100, batch_size=128, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=50, batch_size=128, validation_split=0.2, callbacks=[es])
 
 # 4. 평가, 예측
 loss = model.evaluate(x_test, y_test)
