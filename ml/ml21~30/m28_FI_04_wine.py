@@ -40,8 +40,12 @@ for model, value in enumerate(model_list) :
     
     # 하위 20-25%의 피처 제거 후 재학습
     #idx = np.argsort(model.feature_importances_)[int(len(model.feature_importances_) * 0.2) : int(len(model.feature_importances_) * 0.25)]
-    argmin = np.argpartition(model.feature_importances_, 4)[:4]
-    x_drop = pd.DataFrame(x).drop(argmin, axis=1)
+    # argmin = np.argpartition(model.feature_importances_, 4)[:4]
+    # x_drop = pd.DataFrame(x).drop(argmin, axis=1)
+    
+    n_drop = int(len(model.feature_importances_) * 0.25)
+    idx = np.argsort(model.feature_importances_)[-n_drop:]
+    x_drop = pd.DataFrame(x).drop(x.columns[idx], axis=1) 
     x_train1, x_test1, y_train1, y_test1 = train_test_split(x_drop, y, train_size=0.7, shuffle=True, random_state=123)
 
     model.fit(x_train1, y_train1)
