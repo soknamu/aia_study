@@ -4,22 +4,29 @@ from sklearn.datasets import load_iris,load_breast_cancer,load_wine,\
     load_digits,fetch_covtype
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor,RandomForestClassifier
-from tensorflow.keras.datasets import mnist
+from sklearn.ensemble import RandomForestClassifier
 
 #1. 데이터
+
+path = './_data/dacon_diabetes/'
+train_csv = pd.read_csv(path + 'train.csv', index_col = 0)
+
+x1 = train_csv.drop(['Outcome'],axis =1)
+y1 = train_csv['Outcome']
 
 data_list = [load_iris(return_X_y=True),
              load_breast_cancer(return_X_y=True),
              load_digits(return_X_y=True),
              load_wine(return_X_y=True),
+             (x1, y1),
              fetch_covtype(return_X_y=True)]
 
-data_name_list = ['iris : ',
-                  'breast_cancer :',
-                  'digits :',
-                  'wine :',
-                  'covtype :']
+data_name_list = ['iris',
+                  'breast_cancer',
+                  'digits',
+                  'wine',
+                  'dacon_diabetes',
+                  'covtype']
 
 for i, v in enumerate(data_list):
     x,y = v
@@ -55,28 +62,33 @@ for i, v in enumerate(data_list):
 #     x_lda = lda.fit_transform(x,y)   
 # print(data_name_list[i], ':', x.shape,'->', x_lda.shape)
 
-# ===================== 변환전 iris :  ===================
+# ===================== 변환전 iris ===================
 # acc : 1.0
-# ===================== 변환후 iris :  ===================
-# iris :  : (150, 4) -> (150, 2)
-# acc : 0.9
-# ===================== 변환전 breast_cancer : ===================
+# ===================== 변환후 iris ===================
+# iris : (150, 4) -> (150, 2)
+# acc : 0.8666666666666667
+# ===================== 변환전 breast_cancer ===================
 # acc : 1.0
-# ===================== 변환후 breast_cancer : ===================
-# breast_cancer : : (569, 30) -> (569, 1)
+# ===================== 변환후 breast_cancer ===================
+# breast_cancer : (569, 30) -> (569, 1)
 # acc : 0.9649122807017544
-# ===================== 변환전 digits : ===================
+# ===================== 변환전 digits ===================
 # acc : 1.0
-# ===================== 변환후 digits : ===================
-# digits : : (1797, 64) -> (1797, 9)
-# acc : 0.9666666666666667
-# ===================== 변환전 wine : ===================
+# ===================== 변환후 digits ===================
+# digits : (1797, 64) -> (1797, 9)
+# acc : 0.9694444444444444
+# ===================== 변환전 wine ===================
 # acc : 1.0
-# ===================== 변환후 wine : ===================
-# wine : : (178, 13) -> (178, 2)
+# ===================== 변환후 wine ===================
+# wine : (178, 13) -> (178, 2)
 # acc : 1.0
-# ===================== 변환전 covtype : ===================
+# ===================== 변환전 dacon_diabetes ===================
 # acc : 1.0
-# ===================== 변환후 covtype : ===================
-# covtype : : (581012, 54) -> (581012, 6)
-# acc : 0.9559477810383553
+# ===================== 변환후 dacon_diabetes ===================
+# dacon_diabetes : (652, 8) -> (652, 1)
+# acc : 0.7404580152671756
+# ===================== 변환전 covtype ===================
+# acc : 1.0
+# ===================== 변환후 covtype ===================
+# covtype : (581012, 54) -> (581012, 6)
+# acc : 0.9565845976437786
