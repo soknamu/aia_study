@@ -11,3 +11,14 @@ EduAtoZ
 
 ###과제###3
 #31 10개 만들어 놓기.
+
+            과제
+1. pandas(DataFrame) -> numpy
+
+2. numpy -> pandas(DataFrame)
+
+3. list -> numpy
+
+4. list -> pandas(DataFrame)
+
+각각 예제 1개씩 만들어서 제출.

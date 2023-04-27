@@ -1,0 +1,15 @@
+import pandas as pd
+
+# read in the two CSV files
+dir1 = './_data/spark/TEST_AWS/'
+dir2 = './_data/spark/TEST_INPUT/'
+csv_save = './_data/spark/'
+
+df1 = pd.read_csv(dir2 + 'test_input.csv')
+df2 = pd.read_csv(dir1 + 'test_aws.csv')
+
+# join the two dataframes using a common column
+merged_df = pd.merge(df1, df2, on='common_column')
+
+# write the merged dataframe to a new CSV file
+merged_df.to_csv(csv_save + 'merged_file.csv', index=False)

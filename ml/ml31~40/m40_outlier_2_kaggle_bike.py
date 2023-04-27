@@ -16,6 +16,9 @@ x = train_csv.drop(['count','casual','registered'], axis =1)
 
 y = train_csv['count']
 
+#결측치 제거
+imputer = IterativeImputer(estimator=XGBRegressor())
+x = imputer.fit_transform(x)
 
 def outliers(data_out):
     quartile_1, q2, quartile_3 = np.percentile(data_out, [25, 50, 75], axis=0)
@@ -30,10 +33,6 @@ def outliers(data_out):
 outliers_loc = outliers(x)
 print('이상치의 위치 : ', list((outliers_loc)))
 x[outliers_loc] = 99999999999
-
-#결측치 제거
-imputer = IterativeImputer(estimator=XGBRegressor())
-x = imputer.fit_transform(x)
 
 xgb = XGBRegressor()
 xgb.fit(x, y)

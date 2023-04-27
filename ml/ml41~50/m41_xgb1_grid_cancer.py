@@ -33,21 +33,21 @@ kfold = KFold(n_splits=n_splits, shuffle= True, random_state=369)
 # 'reg_alpha': [0, 0.1, 0.01, 0.001, 1, 2, 10] /디폴트 0/ 0~inf/ L1 절대값 가중치 규제/ alpha
 # 'reg_lambda': [0, 0.1, 0.01, 0.001, 1, 2, 10] /디폴트 1/ 0~inf/ L2 제곱 가중치 규제/ lambda
 
-parameters = {'n_estimators' : [100], #n_estimators 100
-              'learning_rate' : [0.3], #0.3
-              'max_depth': [3],
+parameters = {'n_estimators' : [100],  # epochs 역할
+              'learning_rate' : [0.3], # 학습률의 크기 너무 크면 최적의 로스값을 못잡고 너무 작으면 최소점에 가지도못하고 학습이끝남.
+              'max_depth': [3],        #tree계열일때 깊이를 3개까지만 가겠다.
               'gamma': [0],
-              'min_child_weight': [1],
-              'subsample': [0.5],
+              'min_child_weight': [1], #최소의 
+              'subsample': [0.5],      # dropout과 비슷한 개념.
               'colsample_bytree': [1],
               'colsample_bylevel': [1],
               'colsample_bynode': [1],
-              'reg_alpha': [1],
+              'reg_alpha': [1],        #규제
               'reg_lambda': [1]
               }
 
-
-
+#L1규제 : 절대값/ 라쏘
+#L2규제 : 제곱/ 리지
 
 #2. 모델
 xgb = XGBClassifier(random_state = 369)
