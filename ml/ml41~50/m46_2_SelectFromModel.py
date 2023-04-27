@@ -63,7 +63,7 @@ from sklearn.feature_selection import SelectFromModel
 for i in thresholds: 
     selection = SelectFromModel(model, threshold=i, #특정값 이상인 특성만 선택.
                                 prefit=False,#사전 훈련된 것을 사용하겠어? False면 다시 훈련.
-                               )
+                               ) #t사이킷런 1.0.2는 false로 했을 때 안돌아감. 즉, True만됨.
     
     select_x_train = selection.transform(x_train)  #맨 처음 값이 먼저 들어 갔을때 10개 거치고, 두번째하는 낮은값 제외하고 돌아감.
     select_x_test = selection.transform(x_test)

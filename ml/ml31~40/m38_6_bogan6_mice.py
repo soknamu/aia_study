@@ -30,8 +30,22 @@ data.columns = ['x1','x2','x3','x4']
 inpute_df = mice(data.values)
 print(inpute_df)
 
+
+
 #         과제
 # 1. pandas(DataFrame) -> numpy
+
+data = {'col1': [1, 2, 3], 'col2': [4, 5, 6], 'col3': [7, 8, 9]}
+df = pd.DataFrame(data)
+
+# Convert the DataFrame to a NumPy array
+np_array = df.to_numpy()
+
+print(np_array)
+
+array([[1, 4, 7],
+       [2, 5, 8],
+       [3, 6, 9]])
 
 # 2. numpy -> pandas(DataFrame)
 
