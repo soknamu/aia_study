@@ -10,7 +10,7 @@ from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from lightgbm import LGBMClassifier
 from sklearn.preprocessing import PolynomialFeatures
-from sklearn.pipeline import make_pipeline
+from sklearn.pipeline import make_pipeline,Pipeline
 from sklearn.decomposition import PCA
 poly = PolynomialFeatures(degree= 2 ,include_bias= False)
 
@@ -61,7 +61,7 @@ print(x_train_poly.shape,x_test_poly.shape)
 #     'verbose': -1,
 #     'num_boost_round' : 3000
 # }
-model = make_pipeline(PCA(n_components=60),
+model = make_pipeline(PCA(n_components=90),
                       MinMaxScaler(), 
                       LGBMClassifier(objective='multiclass', 
                                      num_class=3, metric='multi_logloss', 
@@ -69,8 +69,9 @@ model = make_pipeline(PCA(n_components=60),
                                      feature_fraction=0.9, 
                                      bagging_fraction=0.8, 
                                      bagging_freq=5, 
-                                     verbose=-1, 
-                                     num_boost_round=3000))
+                                     verbose=1, 
+                                     num_boost_round=3000,
+                                     early_stopping_rounds=100))
  #11
 # model.set_params(
 # **params
@@ -78,8 +79,10 @@ model = make_pipeline(PCA(n_components=60),
 model.fit(x_train_poly, y_train, 
         #early_stopping_rounds=100,
         #,eval_set=[x_test, y_test]
-        #eval_set=[(x_test, y_test)]
+        eval_set=[(x_test, y_test)]
         ) 
+
+#해결책 3,9를 삭제하거나 편입시키기.
 
 # Evaluate model
 results = model.score(x_test_poly, y_test)
