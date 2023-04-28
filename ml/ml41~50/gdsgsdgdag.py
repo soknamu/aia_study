@@ -43,3 +43,29 @@ for threshold in np.sort(model.feature_importances_):
     selection_y_predict = selection_model.predict(select_x_test)
     r2 = r2_score(y_test, selection_y_predict)
     print("Tresh=%.3f, n=%d, R2: %.2f%%" % (threshold, select_x_train.shape[1], r2 * 100))
+    
+    
+    
+# Check label distribution
+print(train_csv['quality'].value_counts())
+
+# Remove rows with single class label
+single_class_label = train_csv['quality'].nunique() == 1
+if single_class_label:
+    train_csv = train_csv[train_csv['quality'] != train_csv['quality'].unique()[0]]
+
+# Split the data
+x = train_csv.drop(['quality'], axis=1)
+y = train_csv['quality']
+
+x_train, x_test, y_train, y_test = train_test_split(
+    x, y, shuffle=True, random_state=850, train_size=0.7, stratify=y)
+
+# Train the model
+model = XGBClassifier()
+model.set_params(**parameters, early_stopping_rounds=10, eval_metric='merror')
+
+model.fit(x_train, y_train,
+          eval_set=[(x_train, y_train), (x_test, y_test)],
+          verbose=True)
+

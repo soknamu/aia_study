@@ -9,8 +9,8 @@ from sklearn.preprocessing import MinMaxScaler,StandardScaler, MaxAbsScaler
 from tensorflow.python.keras.callbacks import EarlyStopping
 #1. 데이터 
 
-path = './_data/dacon_wine/'
-path_save = './_save/dacon_wine/'
+path = './_data/wine/'
+path_save = './_save/wine/'
 
 train_csv = pd.read_csv(path + 'train.csv', index_col= 0)
 test_csv = pd.read_csv(path + 'test.csv', index_col= 0)
@@ -39,7 +39,7 @@ print(le.transform(['white', 'red'])) #[1 0]
 
 # 정의, 핏 ,트랜스폼.
 ###################################################################################
-'''
+
 print(train_csv.shape) #(1459, 10)
 print(test_csv.shape) #(715, 9)
 
@@ -52,9 +52,9 @@ print(train_csv.isnull().sum())
 print(train_csv.shape) #(1328, 10)
 
 
-x = train_csv.drop(['count'], axis= 1)
+x = train_csv.drop(['quality'], axis= 1)
 
-y = train_csv['count']
+y = train_csv['quality']
 
 x_train, x_test, y_train, y_test = train_test_split(x,y, train_size= 0.7, shuffle= True, random_state= 942)
 
@@ -69,7 +69,7 @@ print(np.min(x_test), np.max(x_test))
 
 #2 모델구성
 
-input1 =Input(shape=(9,))
+input1 =Input(shape=(12,))
 dense1 = Dense(150, activation= 'relu')(input1)
 dense2 = Dense(135)(dense1)
 drop1 = Dropout(0.25)(dense2)
@@ -119,4 +119,4 @@ y_submit = model.predict(test_csv)
 submission = pd.read_csv(path + 'submission.csv', index_col = 0)
 submission['count'] = y_submit
 submission.to_csv(path_save + 'submit_0314_1305 .csv')
-'''
+

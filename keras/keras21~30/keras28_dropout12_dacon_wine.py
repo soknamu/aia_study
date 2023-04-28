@@ -11,8 +11,8 @@ from tensorflow.python.keras.callbacks import EarlyStopping,ModelCheckpoint
 from sklearn.preprocessing import LabelEncoder
 #1. 데이터
 
-path = './_data/dacon_wine/'
-path_save = './_save/dacon_wine/'
+path = './_data/wine/'
+path_save = './_save/wine/'
 
 train_csv = pd.read_csv(path + 'train.csv', index_col= 0)
 test_csv = pd.read_csv(path + 'test.csv', index_col= 0)
@@ -67,7 +67,7 @@ model = Model(inputs = input1, outputs = output1)
 
 #3.컴파일
 
-es = EarlyStopping(monitor= 'val_acc', patience= 550, mode = 'max',
+es = EarlyStopping(monitor= 'val_acc', patience= 50, mode = 'max',
                    restore_best_weights= True,
                    verbose= 1)
 
@@ -113,14 +113,14 @@ y_predict = np.argmax(y_predict, axis =-1)
 acc = accuracy_score(y_test_acc, y_predict)
 print('Accuary score : ', acc)
 
-#파일저장
+# #파일저장
 
-y_submit = model.predict(test_csv)
-y_submit = np.argmax(y_submit, axis = 1)
-submission = pd.read_csv(path + 'submission.csv', index_col = 0)
-y_submit += 3
-submission['quality'] = y_submit
-submission.to_csv(path_save + 'wine_' + date + '.csv')
+# y_submit = model.predict(test_csv)
+# y_submit = np.argmax(y_submit, axis = 1)
+# submission = pd.read_csv(path + 'submission.csv', index_col = 0)
+# y_submit += 3
+# submission['quality'] = y_submit
+# submission.to_csv(path_save + 'wine_' + date + '.csv')
 
 # from matplotlib import pyplot as plt
 # plt.subplot(1,2,1)
