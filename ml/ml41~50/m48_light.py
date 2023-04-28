@@ -9,6 +9,10 @@ from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 from sklearn.ensemble import RandomForestClassifier
 from lightgbm import LGBMClassifier
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.pipeline import make_pipeline
+from sklearn.decomposition import PCA
+poly = PolynomialFeatures(degree= 2 ,include_bias= False)
 
 # Load data
 path = './_data/wine/'
@@ -32,55 +36,67 @@ y = train_csv['quality']
 x_train, x_test, y_train, y_test = train_test_split(
     x,y, shuffle=True, random_state=850, train_size=0.7, stratify=y)
 
-# # One-hot encode 'y'
-# y_train = pd.get_dummies(y_train)
-# y_test = pd.get_dummies(y_test)
+# # Scale data
+# scaler = MinMaxScaler()
+# x_train = scaler.fit_transform(x_train)
+# x_test = scaler.transform(x_test)
+# test_csv = scaler.transform(test_csv)
 
-# Scale data
-scaler = RobustScaler()
-x_train = scaler.fit_transform(x_train)
-x_test = scaler.transform(x_test)
-test_csv = scaler.transform(test_csv)
+# Add polynomial features
+x_train_poly = poly.fit_transform(x_train)
+x_test_poly = poly.transform(x_test)
+test_csv_poly = poly.transform(test_csv)
 
-# parameters = {'n_estimators': 1000,  
-#               'learning_rate': 0.3, 
-#               'max_depth': 3,
-#               'boosting_type': 'gbdt',        
-#               'min_child_weight': 1,  
-#               'subsample': 0.5, 
-#               'colsample_bytree': 1,
-#               'colsample_bynode': 1,
-#               'reg_alpha': 1,        
-#               'reg_lambda': 1,
-#               'early_stopping_rounds': 100
-#               }
+print(x_train_poly.shape,x_test_poly.shape)
+
 # params = {
-#     'boosting_type': 'dart',
 #     'objective': 'multiclass',
 #     'metric': 'multi_logloss',
 #     'num_class': 3,
 #     'num_leaves': 31,
-#     'learning_rate': 0.05,
+#     'learning_rate': 0.1,
 #     'feature_fraction': 0.9,
 #     'bagging_fraction': 0.8,
 #     'bagging_freq': 5,
 #     'verbose': -1,
-#     'num_boost_round' : 1000
+#     'num_boost_round' : 3000
 # }
-model = LGBMClassifier()
-# model.set_params(#**parameters, 
+model = make_pipeline(PCA(n_components=60),
+                      MinMaxScaler(), 
+                      LGBMClassifier(objective='multiclass', 
+                                     num_class=3, metric='multi_logloss', 
+                                     num_leaves=31, learning_rate=0.1, 
+                                     feature_fraction=0.9, 
+                                     bagging_fraction=0.8, 
+                                     bagging_freq=5, 
+                                     verbose=-1, 
+                                     num_boost_round=3000))
+ #11
+# model.set_params(
 # **params
 #                  )
-model.fit(x_train, y_train, 
+model.fit(x_train_poly, y_train, 
         #early_stopping_rounds=100,
         #,eval_set=[x_test, y_test]
         #eval_set=[(x_test, y_test)]
         ) 
 
 # Evaluate model
-results = model.score(x_test, y_test)
+results = model.score(x_test_poly, y_test)
 print("최종점수:", results)
 
-y_predict = model.predict(x_test)
+y_predict = model.predict(x_test_poly)
 acc = accuracy_score(y_test, y_predict)
 print("acc 는", acc)
+
+# 4.1 내보내기
+import datetime
+date = datetime.datetime.now()
+date = date.strftime('%m%d_%H%M%S')
+y_submit = model.predict(test_csv_poly)
+
+y_submit = pd.DataFrame(y_submit)
+y_submit = np.array(y_submit)
+submission = pd.read_csv(path + 'sample_submission.csv', index_col=0)
+submission['quality'] = y_submit
+submission.to_csv(path_save + 'wine_' + date + '.csv')
