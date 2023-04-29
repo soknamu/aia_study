@@ -33,45 +33,45 @@ train = replace_outliers_with_nan(train, ['Estimated_Departure_Time',
 
 
 # Replace variables with missing values except for the label (Delay) with the most frequent values of the training data
-NaN = ['Origin_State', 'Destination_State', 'Airline', 'Estimated_Departure_Time', 'Estimated_Arrival_Time', 'Carrier_Code(IATA)', 'Carrier_ID(DOT)']
-qual_col = ['Origin_Airport', 'Origin_State', 'Destination_Airport', 'Destination_State', 'Airline', 'Carrier_Code(IATA)', 'Tail_Number']
+NaN_columns = ['Origin_State', 'Destination_State', 'Airline', 'Estimated_Departure_Time', 'Estimated_Arrival_Time', 'Carrier_Code(IATA)', 'Carrier_ID(DOT)']
+qual_cols = ['Origin_Airport', 'Origin_State', 'Destination_Airport', 'Destination_State', 'Airline', 'Carrier_Code(IATA)', 'Tail_Number']
 
 # Concatenate the training and test sets
 concatenated = pd.concat([train.drop('Delay', axis=1), test])
 
 # Fit the label encoder on the concatenated set
-for i in qual_col:
+for col in qual_cols:
     le = LabelEncoder()
-    le = le.fit(concatenated[i])
-    train[i] = le.transform(train[i])
-    test[i] = le.transform(test[i])
+    le.fit(concatenated[col].astype(str))
+    train[col] = le.transform(train[col].astype(str))
+    test[col] = le.transform(test[col].astype(str))
 
-# Replace missing values with the mean of each column
-for col in NaN:
+for col in NaN_columns:
     concatenated[col] = pd.to_numeric(concatenated[col], errors='coerce')
-    mean = concatenated[col].mean() # calculate mean of the column
-    train[col] = train[col].fillna(mean) # fill missing values with mean
+    mean = concatenated[col].mean()
+    train[col] = train[col].fillna(mean)
     test[col] = test[col].fillna(mean)
+
 
 print('Done.')
 
 # Quantify qualitative variables
 
 # Remove unlabeled data
-#train = train.dropna()
+train = train.dropna()
 
-# column4 = {}
-# for i, column in enumerate(sample_submission.columns):
-#     column4[column] = i
+column4 = {}
+for i, column in enumerate(sample_submission.columns):
+    column4[column] = i
 
-# def to_number(x, dic):
-#     return dic[x]
+def to_number(x, dic):
+    return dic[x]
 
-# train.loc[:, 'Delay_num'] = train['Delay'].apply(lambda x: to_number(x, column4))
-# print('Done.')
+train.loc[:, 'Delay_num'] = train['Delay'].apply(lambda x: to_number(x, column4))
+print('Done.')
 
-train_x = train.drop(columns=['ID', 'Delay'])
-train_y = train['Delay']
+train_x = train.drop(columns=['ID', 'Delay','Delay_num'])
+train_y = train['Delay_num']
 test_x = test.drop(columns=['ID'])
 
 # Split the training dataset into a training set and a validation set
@@ -88,16 +88,23 @@ cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 # Model and hyperparameter tuning using GridSearchCV
 model = XGBClassifier(random_state=42)
 
-param_grid = {
-    'learning_rate': [0.8, 0.5],
-    'max_depth': [2, 6],
-    'n_estimators': [100, 900],
-}
+parameters = {'n_estimators' : [15],  # epochs 역할
+              'learning_rate' : [0.01, 0.1, 0.005,0.00001], # 학습률의 크기 너무 크면 최적의 로스값을 못잡고 너무 작으면 최소점에 가지도못하고 학습이끝남.
+              'max_depth': [3],        #tree계열일때 깊이를 3개까지만 가겠다.
+              'gamma': [0],
+              'min_child_weight': [1], #최소의 
+              'subsample': [0.5],      # dropout과 비슷한 개념.
+              'colsample_bytree': [1],
+              'colsample_bylevel': [1],
+              'colsample_bynode': [1],
+              'reg_alpha': [1],        #규제
+              'reg_lambda': [1]
+              }
 
 grid = GridSearchCV(model,
-                    param_grid,
+                    parameters,
                     cv=cv,
-                    scoring='accuarcy',
+                    scoring='accuracy',
                     n_jobs=-1,
                     verbose=1)
 
@@ -116,6 +123,6 @@ recall = recall_score(val_y, val_y_pred, average='weighted')
 print('Accuracy_score:',acc)
 print('F1 Score:f1',f1)
 
-y_pred = np.round(best_model.predict_proba(test_x))
+y_pred = best_model.predict_proba(test_x)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
 submission.to_csv('c:/study/_save/dacon_airplane/d23submission.csv')
