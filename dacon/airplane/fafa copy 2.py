@@ -37,7 +37,7 @@ train = replace_outliers_with_nan(train, ['Estimated_Departure_Time',
 NaN_columns = ['Origin_State', 'Destination_State', 'Airline', 'Estimated_Departure_Time', 'Estimated_Arrival_Time', 'Carrier_Code(IATA)', 'Carrier_ID(DOT)']
 qual_cols = ['Origin_Airport', 'Origin_State', 'Destination_Airport', 'Destination_State', 'Airline', 'Carrier_Code(IATA)', 'Tail_Number']
 
-train['Delay'] = train['Delay'].map({'Delayed': 0, 'Not_Delayed': 1})
+# train['Delay'] = train['Delay'].map({'Delayed': 0, 'Not_Delayed': 1})
 
 # Concatenate the training and test sets
 concatenated = pd.concat([train.drop('Delay', axis=1), test])
@@ -88,46 +88,35 @@ train_x = scaler.fit_transform(train_x)
 val_x = scaler.transform(val_x)
 test_x = scaler.transform(test_x)
 
-# Cross-validation with StratifiedKFold
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-# Model and hyperparameter tuning using GridSearchCV
-model = XGBClassifier(random_state=42)
+for i in range(10000):
+    kf = StratifiedKFold(n_splits=5, shuffle=True, random_state=i)
 
-parameters = {'n_estimators' : [3],  # epochs 역할
-              'learning_rate' : [0.0000001], # 학습률의 크기 너무 크면 최적의 로스값을 못잡고 너무 작으면 최소점에 가지도못하고 학습이끝남.
-              'max_depth': [3],        #tree계열일때 깊이를 3개까지만 가겠다.
-              'gamma': [0],
-              'min_child_weight': [1], #최소의 
-              'subsample': [0.5],      # dropout과 비슷한 개념.
-              'colsample_bytree': [1],
-              'colsample_bylevel': [1],
-              'colsample_bynode': [1],
-              'reg_alpha': [1],        #규제
-              'reg_lambda': [1]
-              }
+    def objective(trial):
+                alpha = trial.suggest_loguniform('alpha', 0.0000001, 0.1)
+                n_restarts_optimizer  = trial.suggest_int('n_restarts_optimizer', 1, 80)
+                optimizer = trial.suggest_categorical('optimizer', ['fmin_l_bfgs_b', 'Powell', 'CG'])
 
-grid = GridSearchCV(model,
-                    parameters,
-                    cv=cv,
-                    scoring='accuracy',
-                    n_jobs=-1,
-                    verbose=1)
+                model = LGBMClassifier(
+                    alpha=alpha,
+                    n_restarts_optimizer=n_restarts_optimizer,
+                    optimizer=optimizer,
+                )
+                
+                model.fit(train_x, train_y)
+                
+                print('light result : ', model.score(val_y, val_y_pred))
+                
+                y_pred = np.round(model.predict(test_x))
 
-grid.fit(train_x, train_y)
 
-best_model = grid.best_estimator_
+                # Model evaluation
+                val_y_pred = np.round(model.predict(val_x))
 
-# Model evaluation
-val_y_pred = np.round(best_model.predict(val_x))
+                score = accuracy_score(val_y, val_y_pred)
+                f1 = f1_score(val_y, val_y_pred, average='weighted')
+                print('Accuracy_score:',score)
+                print('F1 Score:f1',f1)
 
-acc = accuracy_score(val_y, val_y_pred)
-f1 = f1_score(val_y, val_y_pred, average='weighted')
-pre = precision_score(val_y, val_y_pred, average='weighted')
-recall = recall_score(val_y, val_y_pred, average='weighted')
-
-print('Accuracy_score:',acc)
-print('F1 Score:f1',f1)
-
-y_pred = best_model.predict_proba(test_x)
-submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('c:/study/_save/dacon_airplane/29submission.csv')
+                y_pred = model.predict_proba(test_x)
+                submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
+                submission.to_csv('c:/study/_save/dacon_airplane/29submission.csv')
