@@ -78,8 +78,8 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, shuffle= True, train_size= 0.75, random_state=501 
 )
 
-parameter = {'n_estimators' :100000,  
-              'learning_rate' : 0.0005,
+parameter = {'n_estimators' :3000,  
+              'learning_rate' : 0.05,
               'max_depth': 3,        
               'gamma': 0,
               'min_child_weight': 1, 
@@ -132,7 +132,7 @@ y_submit = model.predict(predict_y)
 y_submit = y_submit.round(3)
 submission = pd.read_csv(path + 'answer_sample.csv',index_col= 0)
 submission['PM2.5'] = y_submit
-submission.to_csv(path_save + '제출용56.csv')
+submission.to_csv(path_save + '제출용57.csv')
 
 #결측치만 추출한다.
 #그냥

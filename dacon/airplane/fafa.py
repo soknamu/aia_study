@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler, PolynomialFeatures
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer, log_loss
 from xgboost import XGBClassifier
 import time
 # Load data
@@ -61,10 +61,11 @@ train_x = pf.fit_transform(train_x)
 train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.2, random_state=42)
 
 # Normalize numerical features
-# scaler = StandardScaler()
-# train_x = scaler.fit_transform(train_x)
-# val_x = scaler.transform(val_x)
-# test_x = scaler.transform(test_x)
+scaler1 = StandardScaler()
+scaler2 = StandardScaler()
+train_x = scaler1.fit_transform(train_x)
+val_x = scaler1.transform(val_x)
+test_x = scaler2.fit_transform(test_x)
 
 # Cross-validation with StratifiedKFold
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
@@ -76,9 +77,9 @@ model = XGBClassifier(random_state=42,
                       predictor = 'gpu_predictor')
 
 param_grid = {
-    'learning_rate': [0.05, 0.01],
-    'max_depth': [2,6],
-    'n_estimators': [600, 1000],
+    'learning_rate': [0.0151,0.015,0.0149], #0.015 best
+    'max_depth': [6], #6best
+    'n_estimators': [649,648,647], #649 best
 }
 
 grid = GridSearchCV(model,
@@ -99,16 +100,28 @@ acc = accuracy_score(val_y, val_y_pred)
 f1 = f1_score(val_y, val_y_pred, average='weighted')
 pre = precision_score(val_y, val_y_pred, average='weighted')
 recall = recall_score(val_y, val_y_pred, average='weighted')
+log = log_loss(val_y, val_y_pred)
 
 print('Accuracy_score:',acc)
 print('F1 Score:f1',f1)
-
+print('logloss :', log)
+print("best parameters :", grid.best_params_)
+print("best score :", grid.best_score_)
 y_pred = best_model.predict_proba(test_x)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('c:/study/_save/dacon_airplane/1708submission.csv', float_format='%.3f')
+submission.to_csv('c:/study/_save/dacon_airplane/1943submission.csv', float_format='%.3f')
 
+#1708
 # param_grid = {
 #     'learning_rate': [0.0001, 0.05],
 #     'max_depth': [4,6],
-#     'n_estimators': [600, 1150],
+#     'n_estimators': [600, 1000],
+# }
+
+
+#1737
+# param_grid = {
+#     'learning_rate': [0.04, 0.01],
+#     'max_depth': [2,6],
+#     'n_estimators': [600, 1300],
 # }
