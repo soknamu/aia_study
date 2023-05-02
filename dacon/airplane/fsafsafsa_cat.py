@@ -7,7 +7,6 @@ from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_sc
 from xgboost import XGBClassifier
 from catboost import CatBoostClassifier
 import time
-import optuna
 # Load data
 train = pd.read_csv('c:/study/_data/dacon_airplane/train.csv')
 test = pd.read_csv('c:/study/_data/dacon_airplane/test.csv')
