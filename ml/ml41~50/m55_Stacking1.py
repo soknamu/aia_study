@@ -10,8 +10,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier,BaggingClassifier
-from sklearn.ensemble import VotingClassifier #투표
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import StackingClassifier
 
 #1. 데이터
 x,y  = load_breast_cancer(return_X_y=True)
@@ -29,9 +29,11 @@ lr = LogisticRegression()
 knn = KNeighborsClassifier(n_neighbors=8)
 dt = DecisionTreeClassifier()
 
-model = VotingClassifier(
+model = StackingClassifier(
     estimators=[('LR', lr), ('KNN', knn), ('DT', dt)],
-                voting='soft', #디폴트는 하드, 성능은 소프트가 더 좋음.
+    final_estimator=DecisionTreeClassifier() #스테킹안에 보팅도 가능하다.
+    
+                #voting='soft', #디폴트는 하드, 성능은 소프트가 더 좋음.
 )
 
 #3. 훈련
@@ -42,14 +44,6 @@ y_pred = model.predict(x_test)
 print('model.score : ', model.score(x_test,y_test))
 print("Voting.acc : ", accuracy_score(y_test,y_pred))
 
-#Hard Voting
-# model.score :  0.9473684210526315
-# acc :  0.9473684210526315 
-
-#Soft Voting
-# model.score :  0.9649122807017544
-# acc :  0.9649122807017544
-
 Classifiers = [lr,knn,dt]
 
 for model2 in Classifiers:
@@ -58,3 +52,9 @@ for model2 in Classifiers:
     score2 = accuracy_score(y_test,y_pred)
     class_name = model2.__class__.__name__ 
     print("{0}정확도 : {1:.4f}".format(class_name, score2))
+
+# model.score :  0.956140350877193     
+# Voting.acc :  0.956140350877193      
+# LogisticRegression정확도 : 0.964912  
+# KNeighborsClassifier정확도 : 0.929825
+# DecisionTreeClassifier정확도 : 0.929825

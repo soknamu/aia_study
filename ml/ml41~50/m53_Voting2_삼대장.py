@@ -31,7 +31,8 @@ cat = CatBoostRegressor(verbose=0) #verbose 디폴트 1
 model = VotingRegressor(
     estimators=[('XGB', xgb), ('LG', lg), ('CAT', cat)],
                 #voting='soft', #디폴트는 하드, 성능은 소프트가 더 좋음.
-)
+)               #Regressor에서 Voting이 안돌아가는 이유: class는 가장 큰 값을 골라 위치를 정하는데  Regressor는 그러지를 못해서.
+                #bagging과의 차이: 배깅은 한가지의 모델, Voting은 여러가지의 모델을 돌리기 위해서 씀
 
 #3. 훈련
 model.fit(x_train,y_train)
@@ -70,8 +71,15 @@ for model2 in Regressors:
     score2 = r2_score(y_test,y_predict)
     
     class_name = model2.__class__.__name__ 
-    print("{0} R2 : {1:4f}".format(class_name, score2))
+    print("{0} R2 : {1:.4f}".format(class_name, score2))
     li.append(score2)
 
 # 리스트 출력
 print(li)
+
+# model.score :  0.713931846488643
+# Voting.acc :  0.713931846488643
+# XGBRegressor R2 : 0.642591
+# LGBMRegressor R2 : 0.707808
+# CatBoostRegressor R2 : 0.712629
+# [0.6425908109050742, 0.7078076837758432, 0.7126292033669571]

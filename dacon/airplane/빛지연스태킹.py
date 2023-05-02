@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import gc
 from sklearn.preprocessing import LabelEncoder, StandardScaler, MinMaxScaler, RobustScaler, MaxAbsScaler
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier,StackingClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold, KFold
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, log_loss
 from xgboost import XGBClassifier
@@ -13,13 +13,9 @@ from lightgbm import LGBMClassifier
 import datetime
 import optuna
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+
 path_save = 'c:/study/_save/dacon_airplane/'
-scaler_list = [
-            #    MinMaxScaler(),
-            #    MaxAbsScaler(), 
-            #    StandardScaler(), 
-               RobustScaler(),
-               ]
+scaler_list = [RobustScaler()]
 model_list = [CatBoostClassifier()]
 
 cat = CatBoostClassifier()
@@ -61,15 +57,15 @@ print('Done.')
 # 정성적 변수는 LabelEncoder를 사용하여 숫자로 인코딩됩니다.
 qual_col = ['Origin_Airport', 'Origin_State', 'Destination_Airport', 'Destination_State', 'Airline', 'Carrier_Code(IATA)', 'Tail_Number']
 
-for i in qual_col:
+for c in qual_col:
     le = LabelEncoder()
-    le = le.fit(train[i])
-    train[i] = le.transform(train[i])
+    le = le.fit(train[c])
+    train[c] = le.transform(train[c])
     
-    for label in np.unique(test[i]):
+    for label in np.unique(test[c]):
         if label not in le.classes_:
             le.classes_ = np.append(le.classes_, label)
-    test[i] = le.transform(test[i])
+    test[c] = le.transform(test[c])
 print('Done.')
 
 # Remove unlabeled data
@@ -77,8 +73,8 @@ print('Done.')
 train = train.dropna()
 
 column_number = {}
-for i, column in enumerate(sample_submission.columns):
-    column_number[column] = i
+for s, column in enumerate(sample_submission.columns):
+    column_number[column] = s
     
 def to_number(x, dic):
     return dic[x]
@@ -106,7 +102,7 @@ for k in range(10):
         test = scaler.transform(test)
 
         def objective(trial, x_train, y_train, x_test, y_test):
-            param = {
+            lgbm_param = {
                 'boosting_type': 'gbdt',
                 'objective': 'binary',
                 'metric': 'binary_logloss',
@@ -115,20 +111,37 @@ for k in range(10):
                 'feature_fraction': trial.suggest_uniform('feature_fraction', 0.1, 1.0),
                 'bagging_fraction': trial.suggest_uniform('bagging_fraction', 0.1, 1.0),
                 'bagging_freq': trial.suggest_int('bagging_freq', 1, 10),
-                'num_boost_round': 1000000,
-                'early_stopping_round': 1000,
+                'num_boost_round': 100000,
                 'device': 'gpu'
             }
-
-            model = LGBMClassifier(n_jobs=-1,**param)
-
-            valid_cv = KFold(n_splits = 5,
-                shuffle = True)
+            xgb_params = {'n_estimators': 10000,
+                'max_depth' : trial.suggest_int('max_depth', 3, 10),
+                'learning_rate': trial.suggest_loguniform('learning_rate',0.01, 0.3),
+                'colsample_bytree': trial.suggest_uniform('colsample_bytree',0.45, 0.5),
+                'subsample': trial.suggest_uniform('subsample',0.45, 0.5)}
+            xgb = XGBClassifier(
+                #**xgb_params
+                )
+            lg = LGBMClassifier(
+                #**lgbm_param
+                                )
+            cat = CatBoostClassifier()
+            
+            # 모델 학습
+            xgb.fit(x_train, y_train, eval_set=[(x_test, y_test)], verbose=1)
+            lg.fit(x_train, y_train, eval_set=[(x_test, y_test)], verbose=1)
+            cat.fit(x_train, y_train, eval_set=[(x_test, y_test)], verbose=1)
+            
+            estimators = [('xgb', xgb), ('lg', lg), ('cat', cat)]
+            model = StackingClassifier(estimators = estimators, 
+            final_estimator=CatBoostClassifier(iterations=1000,
+                                                eval_metric='Logloss',
+                                                early_stopping_rounds=100
+                                                #,verbose=0
+                                                ))
             # 모델 학습
            
             model.fit(x_train, y_train,
-                      eval_set=[(x_train,y_train),
-                                (x_test,y_test)],
                       verbose=1)
             val_y_pred = model.predict(x_test)
             f1 = f1_score(y_test, val_y_pred, average='weighted')

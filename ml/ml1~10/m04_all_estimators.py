@@ -6,7 +6,7 @@ from sklearn.metrics import r2_score
 import warnings
 warnings.filterwarnings("ignore")
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.utils import all_estimators
+from sklearn.utils import all_estimators #모든 파라미터들 돌리는거.
 import sklearn as sk
 #print(sk.__version__) #1.0.2
 
