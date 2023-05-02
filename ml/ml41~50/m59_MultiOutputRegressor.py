@@ -15,7 +15,8 @@ print(y.shape) #(20, 3)
 model = Ridge()
 model.fit(x,y)
 y_pred = model.predict(x)
-print("스코어는 : ",mean_absolute_error(x,y)) #스코어는 :  0.29687777631731227
+print(model.__class__.__name__,"스코어는 : ",
+      mean_absolute_error(x,y)) #스코어는 :  0.29687777631731227
 
 # 예상 [2,110,43]  ->  원래 [138. 33. 68.]
 print(model.predict([[2,110,43]]))
@@ -33,13 +34,37 @@ print(model.predict([[2,110,43]]))
 # 스코어는 :  0.9999999567184008
 # [[138.00215   33.001656  67.99831 ]]
 
-model = MultiOutputRegressor(LGBMRegressor())
-model.fit(x,y)
-y_pred = model.predict(x)
-print("스코어는 : ",round(mean_absolute_error(x,y),4)) #스코어는 :  0.29687777631731227
-# ValueError: y should be a 1d array, got an array of shape (20, 3) instead.
-# 예상 [2,110,43]  ->  원래 [138. 33. 68.]
-print(model.predict([[2,110,43]]))
+# model = MultiOutputRegressor(LGBMRegressor())
+# model.fit(x,y)
+# y_pred = model.predict(x)
+# print(model.__class__.__name__,"스코어 : ",
+#       round(mean_absolute_error(x,y),4)) #스코어는 :  0.29687777631731227
+# # ValueError: y should be a 1d array, got an array of shape (20, 3) instead.
+# # 예상 [2,110,43]  ->  원래 [138. 33. 68.]
+# print(model.predict([[2,110,43]]))
 #lightgbm은 안됨. 1차원에서만 가능.
 #1. 해결책 3번을 해준다
 #2. MultiOutputRegressor을 쓴다.
+'''
+model = MultiOutputRegressor(CatBoostRegressor())
+model.fit(x,y)
+y_pred = model.predict(x)
+print(model.__class__.__name__,"스코어 : ",
+      round(mean_absolute_error(x,y),4)) #스코어는 :  0.29687777631731227
+#그냥 쓰면 안됨, 멀티 프로그램을 쓰라고함.
+# 예상 [2,110,43]  ->  원래 [138. 33. 68.]
+print(model.predict([[2,110,43]]))
+
+# MultiOutputRegressor 스코어 :  104.2333
+# [[138.97756017  33.09066774  67.61547996]]
+'''
+
+
+model = CatBoostRegressor(loss_function='MultiRMSE')
+model.fit(x,y)
+y_pred = model.predict(x)
+print(model.__class__.__name__,"스코어 : ",
+      round(mean_absolute_error(x,y),4)) #스코어는 :  0.29687777631731227
+#그냥 쓰면 안됨, 멀티 프로그램을 쓰라고함.
+# 예상 [2,110,43]  ->  원래 [138. 33. 68.]
+print(model.predict([[2,110,43]]))

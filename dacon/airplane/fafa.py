@@ -11,10 +11,7 @@ train = pd.read_csv('c:/study/_data/dacon_airplane/train.csv')
 test = pd.read_csv('c:/study/_data/dacon_airplane/test.csv')
 sample_submission = pd.read_csv('c:/study/_data/dacon_airplane/sample_submission.csv', index_col=0)
 
-
-
-
-print(train)
+#print(train)
 # Replace variables with missing values except for the label (Delay) with the most frequent values of the training data
 NaN = ['Origin_State', 'Destination_State', 'Airline', 'Estimated_Departure_Time', 'Estimated_Arrival_Time', 'Carrier_Code(IATA)', 'Carrier_ID(DOT)']
 
@@ -79,9 +76,9 @@ model = XGBClassifier(random_state=42,
                       predictor = 'gpu_predictor')
 
 param_grid = {
-    'learning_rate': [0.001, 0.05],
-    'max_depth': [2, 6],
-    'n_estimators': [100, 400],
+    'learning_rate': [0.05, 0.01],
+    'max_depth': [2,6],
+    'n_estimators': [600, 1000],
 }
 
 grid = GridSearchCV(model,
@@ -108,4 +105,10 @@ print('F1 Score:f1',f1)
 
 y_pred = best_model.predict_proba(test_x)
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('c:/study/_save/dacon_airplane/1646submission.csv', float_format='%.3f')
+submission.to_csv('c:/study/_save/dacon_airplane/1708submission.csv', float_format='%.3f')
+
+# param_grid = {
+#     'learning_rate': [0.0001, 0.05],
+#     'max_depth': [4,6],
+#     'n_estimators': [600, 1150],
+# }
