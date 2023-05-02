@@ -110,7 +110,7 @@ for k in range(10):
                 'boosting_type': 'gbdt',
                 'objective': 'binary',
                 'metric': 'binary_logloss',
-                'num_leaves': trial.suggest_int('num_leaves', 2, 256),
+                'num_leaves': trial.suggest_int('num_leaves', 2, 256), #30정도 먹이자.
                 'learning_rate': trial.suggest_loguniform('learning_rate', 0.00000001, 0.01),
                 'feature_fraction': trial.suggest_uniform('feature_fraction', 0.1, 1.0),
                 'bagging_fraction': trial.suggest_uniform('bagging_fraction', 0.1, 1.0),
