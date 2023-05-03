@@ -78,8 +78,8 @@ x_train, x_test, y_train, y_test = train_test_split(
     x, y, shuffle= True, train_size= 0.75, random_state=501 
 )
 
-parameter = {'n_estimators' :3000,  
-              'learning_rate' : 0.05,
+parameter = {'n_estimators' :4000,  
+              'learning_rate' : 0.035,
               'max_depth': 3,        
               'gamma': 0,
               'min_child_weight': 1, 
@@ -109,7 +109,7 @@ end = time.time()
 
 #4.평가, 예측
 results = model.score(x_test, y_test)
-print("걸린 시간 : ", round(end -start, 2), "초")
+print("걸린 시간 : ", round(end -start, 3), "초")
 
 #4.평가, 예측
 
@@ -132,7 +132,7 @@ y_submit = model.predict(predict_y)
 y_submit = y_submit.round(3)
 submission = pd.read_csv(path + 'answer_sample.csv',index_col= 0)
 submission['PM2.5'] = y_submit
-submission.to_csv(path_save + '제출용57.csv')
+submission.to_csv(path_save + '제출용58.csv')
 
 #결측치만 추출한다.
 #그냥
