@@ -6,6 +6,8 @@ from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKF
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer, log_loss
 from xgboost import XGBClassifier
 import time
+from lightgbm import LGBMClassifier
+from bayes_opt import BayesianOptimization
 # Load data
 train = pd.read_csv('c:/study/_data/dacon_airplane/train.csv')
 test = pd.read_csv('c:/study/_data/dacon_airplane/test.csv')
@@ -70,46 +72,76 @@ test_x = scaler2.fit_transform(test_x)
 # Cross-validation with StratifiedKFold
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
-# Model and hyperparameter tuning using GridSearchCV
-model = XGBClassifier(random_state=42,
-                      tree_method='gpu_hist', 
-                      gpu_id=0, 
-                      predictor = 'gpu_predictor')
-
-param_grid = {
-    'learning_rate': [0.013], #0.015 best
-    'max_depth': [6], #6best
-    'n_estimators': [630], #649 best
+param = {
+    'learning_rate': (0.01, 0.3),
+    'max_depth' : (3, 16),
+    'num_leaves': ( 64, 256),
+    'min_child_samples' : (10, 200),
+    'min_child_weight' : (1, 50),
+    'subsample' : (0.5, 1),
+    'colsample_bytree' : (0.5, 1),
+    'max_bin' : (10, 500),
+    'reg_lambda' : (0.001, 10),
+    'reg_alpha' : (0.01, 50),
 }
 
-grid = GridSearchCV(model,
-                    param_grid,
-                    cv=cv,
-                    scoring='accuracy',
-                    n_jobs=-1,
-                    verbose=1)
+def lgb_cv(learning_rate, max_depth, num_leaves, 
+           min_child_samples, min_child_weight, subsample, 
+           colsample_bytree, reg_lambda, reg_alpha, max_bin):
+    
+    # LightGBM 모델의 하이퍼파라미터 설정
+    params = {
+        'boosting_type': 'gbdt',
+        # 'objective': 'Classifier',
+        'learning_rate': learning_rate,
+        'max_depth': int(round(max_depth)),
+        'num_leaves': int(round(num_leaves)),
+        'min_child_samples': int(round(min_child_samples)),
+        'min_child_weight': min_child_weight,
+        'subsample': subsample,
+        'colsample_bytree': colsample_bytree,
+        'max_bin': int(round(max_bin)),
+        'reg_lambda': reg_lambda,
+        'reg_alpha': reg_alpha,
+        'device': 'gpu'
+    }
+    
+    # LightGBM 모델 학습
+    model = LGBMClassifier(**params)
+    model.fit(train_x, train_x, 
+              verbose=1)
 
-grid.fit(train_x, train_y)
+    # Model evaluation
+    val_y_pred = model.predict(val_x)
 
-best_model = grid.best_estimator_
+    # acc = accuracy_score(val_y, val_y_pred)
+    # f1 = f1_score(val_y, val_y_pred, average='weighted')
+    log = log_loss(val_y, val_y_pred)
 
-# Model evaluation
-val_y_pred = best_model.predict(val_x)
+    return - log, model, test_x
 
-acc = accuracy_score(val_y, val_y_pred)
-f1 = f1_score(val_y, val_y_pred, average='weighted')
-pre = precision_score(val_y, val_y_pred, average='weighted')
-recall = recall_score(val_y, val_y_pred, average='weighted')
-log = log_loss(val_y, val_y_pred)
+# BayesianOptimization 객체를 사용하여 lgb_cv 함수를 호출합니다.
 
-print('Accuracy_score:',acc)
-print('F1 Score:f1',f1)
-print('logloss :', log)
-print("best parameters :", grid.best_params_)
-print("best score :", grid.best_score_)
-y_pred = best_model.predict_proba(test_x)
+optimizer = BayesianOptimization(
+    f = lgb_cv,
+    pbounds = param,
+    random_state = 337,
+    verbose = 2
+)
+
+result = optimizer.maximize()
+
+# 학습된 모델과 테스트 데이터를 반환합니다.
+model = result['params']['model']
+test_x = result['params']['test_x']
+
+# 모델을 사용하여 예측을 수행합니다.
+y_pred = model.predict_proba(test_x)
+
+# 결과를 저장합니다.
 submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('c:/study/_save/dacon_airplane/0026submission.csv', float_format='%.3f')
+submission.to_csv('c:/study/_save/dacon_airplane/0000submission.csv', float_format='%.3f')
+
 
 #1708
 # param_grid = {

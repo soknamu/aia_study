@@ -1,15 +1,11 @@
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, StandardScaler,RobustScaler,PolynomialFeatures
+from sklearn.preprocessing import LabelEncoder, StandardScaler, PolynomialFeatures,RobustScaler,MinMaxScaler,MaxAbsScaler
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV, StratifiedKFold
-from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, make_scorer, log_loss
 from xgboost import XGBClassifier
 import time
-import optuna
-from lightgbm import LGBMClassifier
-from catboost import CatBoostClassifier
-
 # Load data
 train = pd.read_csv('c:/study/_data/dacon_airplane/train.csv')
 test = pd.read_csv('c:/study/_data/dacon_airplane/test.csv')
@@ -60,42 +56,54 @@ test_x = test.drop(columns=['ID'])
 
 pf = PolynomialFeatures(degree=2)
 train_x = pf.fit_transform(train_x)
-test_x = pf.transform(test_x)
+
 # Split the training dataset into a training set and a validation set
-train_x, val_x, train_y, val_y = train_test_split(train_x, train_y, test_size=0.2, random_state=42)
+for k in range(91, 1000):
+    
+    train_x, val_x, train_y, val_y = train_test_split(train_x, train_y,test_size=0.3,shuffle=True,random_state=k)
 
-# Cross-validation with StratifiedKFold
-cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-# Model and hyperparameter tuning using GridSearchCV
-model = CatBoostClassifier(iterations=15, 
-                           learning_rate=0.015, 
-                           depth=6,
-                           l2_leaf_reg=1,
-                           random_strength=0.1,
-                           bagging_temperature=1,
-                           task_type='GPU',
-                           verbose=0)
+    # Cross-validation with StratifiedKFold
+    # cv = StratifiedKFold(n_splits=5, shuffle=True,random_state=k)
 
-model.fit(train_x, train_y)
+    # Model and hyperparameter tuning using GridSearchCV
+    model = XGBClassifier(#random_state = k,
+                        tree_method='gpu_hist', 
+                        gpu_id=0, 
+                        predictor = 'gpu_predictor',
+                        learning_rate=0.015, #0.015 best
+                        max_depth= 6,
+                        n_estimators= 649,
+                        )
 
-# Model evaluation
-val_y_pred = np.round(model.predict(val_x))
+    model.fit(train_x, train_y)
 
-acc = accuracy_score(val_y, val_y_pred)
-f1 = f1_score(val_y, val_y_pred, average='weighted')
-pre = precision_score(val_y, val_y_pred, average='weighted')
-recall = recall_score(val_y, val_y_pred, average='weighted')
+    # Model evaluation
+    val_y_pred = model.predict(val_x)
 
-print('Accuracy_score:',acc)
-print('F1 Score:f1',f1)
-y_pred = model.predict_proba(test_x)
-submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
-submission.to_csv('c:/study/_save/dacon_airplane/05031622submission.csv', float_format='%.3f')
+    acc = accuracy_score(val_y, val_y_pred)
+    f1 = f1_score(val_y, val_y_pred, average='weighted')
+    pre = precision_score(val_y, val_y_pred, average='weighted')
+    recall = recall_score(val_y, val_y_pred, average='weighted')
+    log = log_loss(val_y, val_y_pred)
 
-# parameters = {'iterations': [1200], 
-#               'learning_rate': [0.015], 
-#               'depth': [6],
-#               'l2_leaf_reg': [1],
-#               'random_strength': [0.1],
-#               'bagging_temperature': [1]
-#              }
+    print('Accuracy_score:',acc)
+    print('F1 Score:f1',f1)
+    print('logloss :', log)
+    y_pred = model.predict_proba(test_x)
+    submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
+    submission.to_csv(f'c:/study/_save/dacon_airplane/2035submission_{k}.csv', float_format='%.3f')
+
+#1708
+# param_grid = {
+#     'learning_rate': [0.0001, 0.05],
+#     'max_depth': [4,6],
+#     'n_estimators': [600, 1000],
+# }
+
+
+#1737
+# param_grid = {
+#     'learning_rate': [0.04, 0.01],
+#     'max_depth': [2,6],
+#     'n_estimators': [600, 1300],
+# }
