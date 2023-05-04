@@ -1,5 +1,5 @@
 import numpy as np
-from sklearn.datasets import load_boston,fetch_california_housing,load_diabetes
+from sklearn.datasets import fetch_california_housing,load_diabetes
 from sklearn.preprocessing import MinMaxScaler, StandardScaler,RobustScaler,MaxAbsScaler
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor,GradientBoostingRegressor
@@ -15,12 +15,12 @@ RandomForestRegressor,
 GradientBoostingRegressor,
 XGBRegressor]
 
-data_list = [load_boston(return_X_y=True),
+data_list = [
              fetch_california_housing(return_X_y=True),
              load_diabetes(return_X_y=True),
              ]
 
-data_name_list = ['boston : ',
+data_name_list = [
                   'breast_cancer :',
                   'diabetes :'
                   ]
