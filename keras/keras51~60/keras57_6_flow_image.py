@@ -24,7 +24,7 @@ train_datagen = ImageDataGenerator(
     width_shift_range= 0.1,
     height_shift_range=0.1,
     rotation_range=5,
-    zoom_range=0.1,
+    zoom_range=0.01,
     shear_range=0.7,
     fill_mode= 'nearest'
 )
