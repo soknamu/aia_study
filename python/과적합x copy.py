@@ -60,7 +60,7 @@ train_x = pf.fit_transform(train_x)
 train_x_all = train_x.copy()
 train_y_all = train_y.copy()
 # Split the training dataset into a training set and a validation set
-for k in range(49512, 50001):
+for k in range(65500, 70001):
     train_x, train_y = train_x_all.copy(), train_y_all.copy()
     train_x, val_x, train_y, val_y = train_test_split(train_x, train_y,test_size=0.3,shuffle=True,random_state=k) 
     
@@ -96,7 +96,7 @@ for k in range(49512, 50001):
     print('not_delayavr :', y_pred[:,0].mean())
     print('delayavr :', y_pred[:,1].mean())
     
-    if 0.65<=y_pred[:,1].mean()<=0.69:
+    if 0.68<=y_pred[:,1].mean()<=0.74:
     
         submission = pd.DataFrame(data=y_pred, columns=sample_submission.columns, index=sample_submission.index)
         submission.to_csv(f'c:/study/_save/dacon_airplaneX/x_submission_{k}_mean{round(y_pred[:,1].mean(), 3)}.csv', float_format='%.3f')

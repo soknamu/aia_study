@@ -66,7 +66,7 @@ def count_values(filename, start, end, step):
     return counts
 
 
-counts = count_values('c:/study/_save/dacon_airplaneX/x_submission_678진짜해보기.csv', 0.5, 0.8, 0.01)
+counts = count_values('c:/study/_save/dacon_airplaneX/notdelay/x_submission_269940.7686022520065308.csv', 0.5, 0.85, 0.01)
 # counts = count_values('c:/study/_save/dacon_airplaneX/데이콘/제출용10.csv', 0.5, 0.8, 0.01)
 
 # 각 범위에 속하는 값의 개수 출력

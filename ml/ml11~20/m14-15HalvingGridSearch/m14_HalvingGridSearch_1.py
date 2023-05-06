@@ -3,12 +3,12 @@
 #gridSearch는 crossval 기능도 있다
 #RandomSearch는 fold 하나당 x개씩만 랜덤하게 뽑아서 훈련
 #HalvingGridSearch    GridSearch가 모든 데이터를 계산하여 시간이 느린 반면
-
+#하빙그리드가 그리드와 랜덤서치의 장점만 모아놓은 것.
 import numpy as np
 from sklearn.datasets import load_iris, load_digits
 from sklearn.experimental import enable_halving_search_cv
 from sklearn.model_selection import KFold, cross_val_score, GridSearchCV, StratifiedKFold, train_test_split #CV는 crossval
-from sklearn.model_selection import HalvingGridSearchCV
+from sklearn.model_selection import HalvingGridSearchCV,HalvingRandomSearchCV
 from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 import time
