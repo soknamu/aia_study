@@ -12,7 +12,7 @@ node3 = tf.add(node1, node2)
 
 sess = tf.compat.v1.Session()
 
-a = tf.compat.v1.placeholder(tf.float32)
+a = tf.compat.v1.placeholder(tf.float32) #input 기능만 있다.
 b = tf.compat.v1.placeholder(tf.float32) #placeholder : 어떤공간에 값을 받는곳(빈방 같은곳)
 
 add_node = a + b
