@@ -17,7 +17,7 @@ hypothesis = x * w + b
 
 # 3-1. 컴파일
 loss = tf.reduce_mean(tf.square(hypothesis - y))
-optimizer = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=0.08424)
+optimizer = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=0.08)
 train = optimizer.minimize(loss)
 
 # 3-2. 훈련
@@ -63,20 +63,21 @@ import matplotlib.pyplot as plt
 fig, axs = plt.subplots(1, 3, figsize=(15, 5))
 
 # 첫 번째 서브플롯: loss_val_list 그래프
+
 axs[0].plot(loss_val_list)
 axs[0].set_xlabel('epochs')
 axs[0].set_ylabel('loss')
-
+axs[0].set_title('Loss')
 # 두 번째 서브플롯: w_val_list 그래프
 axs[1].plot(w_val_list)
 axs[1].set_xlabel('epochs')
 axs[1].set_ylabel('weights')
-
+axs[1].set_title('weights')
 # 세 번째 서브플롯: w_val_list vs. loss_val_list 그래프
 axs[2].plot(w_val_list, loss_val_list)
 axs[2].set_xlabel('weight')
 axs[2].set_ylabel('loss')
-
+axs[2].set_title('add')
 plt.tight_layout()  # 서브플롯 간의 간격 조절
 plt.show()
 

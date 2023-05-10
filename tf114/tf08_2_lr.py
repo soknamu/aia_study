@@ -33,7 +33,6 @@ with tf.compat.v1.Session() as sess:
     y_pred = x_test * w_val + b_val
     print('[6, 7, 8] 예측:', sess.run(hypothesis, feed_dict={x: x_data}))
 ######################  [실습]  ############################
-        
 
 
 
