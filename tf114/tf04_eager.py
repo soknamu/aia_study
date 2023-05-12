@@ -1,7 +1,7 @@
 import tensorflow as tf
 print(tf.__version__) #1.14.0
 
-# 즉시실행모드!!
+# 즉시실행모드!! = 파이썬모드.(tensor2)
 print(tf.executing_eagerly()) #False #tensorflow2로 가상환경을 바꾸면 True
 #tensorflow1에서는 그래프를 그리기때문에 즉시실행모드가 아님.
 sess = tf.compat.v1.Session()

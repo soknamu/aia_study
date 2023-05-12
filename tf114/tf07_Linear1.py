@@ -21,7 +21,7 @@ optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
 train = optimizer.minimize(loss) 
 #경사하강법 방식으로 옵티마이저를 최적화 시켜준다. 한마디로 로스의 최소값을 뽑는다.
 # 저거 세줄이 model.compile(loss = 'mse', optimizer = 'sgd') 이거임. SGD는 확률적 경사 하강법(Stochastic Gradient Descent)
-#미분을 하는 이유 : 그 시점의 기울기를 찾기 위해.
+#미분을 하는 이유 : 그 시점의 기울기를 찾기 위해. 그지점의 변화량 = 기울기.
 
 #3-2. 훈련
 sess = tf.compat.v1.Session()
