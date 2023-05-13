@@ -20,6 +20,10 @@ x = x.reshape(7, 3, 1)
 model = Sequential()
 model.add(SimpleRNN(32, input_shape=(3, 1)))
 model.add(Dense(16, activation='relu'))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(16, activation='relu'))
+model.add(Dense(16, activation='relu'))
 model.add(Dense(1))
 
 # 3. 컴파일, 훈련
