@@ -48,3 +48,21 @@ print("이상치의 위치 : ", outilers_loc)
 import matplotlib.pyplot as plt
 plt.boxplot(aaa)
 plt.show()
+
+#컬럼 이상치 확인
+# def find_outliers(data, column, threshold=1.5):
+#     outliers = []
+#     q1 = np.percentile(data[column], 25)
+#     q3 = np.percentile(data[column], 75)
+#     iqr = q3 - q1
+#     lower_fence = q1 - threshold * iqr
+#     upper_fence = q3 + threshold * iqr
+    
+#     for i in range(len(data[column])):
+#         if data[column][i] < lower_fence or data[column][i] > upper_fence:
+#             outliers.append(data[column][i])
+            
+#     return outliers
+
+# outliers = find_outliers(train_csv, 'Age', threshold=1.5)
+# print("Outliers:", outliers)
