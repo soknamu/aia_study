@@ -75,7 +75,6 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, shuffle=True, train_si
 model = Sequential()
 model.add(Dense(32, input_dim=9))
 model.add(Dense(64))
-model.add(Dense(64))
 model.add(Dense(32))
 model.add(Dense(8))
 model.add(Dense(1))
