@@ -45,7 +45,7 @@ sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
 # Training
-epochs = 1000
+epochs = 50000
 for epoch in range(epochs):
     _, loss_val = sess.run([train, loss], feed_dict={x: X_train, y: y_train})
     if epoch % 100 == 0:
