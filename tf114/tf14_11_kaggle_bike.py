@@ -4,57 +4,68 @@ from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 import numpy as np
+import pandas as pd
+if  tf.compat.v1.executing_eagerly():
+    tf.compat.v1.disable_eager_execution()
+# 1. 데이터
+path = './_data/kaggle_bike/'
 
-#1. 데이터
+# Load the diabetes dataset
+train_csv = pd.read_csv(path + 'train.csv', index_col=0)
+test_csv = pd.read_csv(path + 'test.csv', index_col=0)
+# Reshape y to have shape (n_samples, 1)
+train_csv = train_csv.dropna()
+x = train_csv.drop(['count','casual','registered'], axis=1)
+y = train_csv['count'].values
+y = y.reshape(-1, 1)
 
-x,y = load_diabetes(return_X_y=True)
-# print(x.shape, y.shape) #(442, 10) (442,)
-# print(y[:10]) #[151.  75. 141. 206. 135.  97. 138.  63. 110. 310.]
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=337)
 
-y = y.reshape(-1, 1) #(442,)에서 y가 (442, 1)로 바뀜
+# Convert the input data to float32
+X_train = X_train.astype(np.float32)
+X_test = X_test.astype(np.float32)
+y_train = y_train.astype(np.float32)
+y_test = y_test.astype(np.float32)
 
-#(442, 10) * (10, 1) + b(?) = (442, 1) -> w : (10, 1)
+# Define the placeholders for input features and target
+x = tf.compat.v1.placeholder(tf.float32, shape=[None, 8])
+y = tf.compat.v1.placeholder(tf.float32, shape=[None, 1])
 
-x_train, x_test, y_train, y_test = train_test_split(x,y, train_size=0.8, shuffle=True, random_state=337)
+# Define the variables for weights and bias with dtype=tf.float32
+w = tf.compat.v1.Variable(tf.random.normal([8, 1], dtype=tf.float32), name='weight')
+b = tf.compat.v1.Variable(tf.zeros([1], dtype=tf.float32), name='bias')
 
-# print(x_train.shape, y_train.shape) #(353, 10) (353, 1)
-# print(x_test.shape, y_test.shape) #(89, 10) (89, 1)
-
-x_place = tf.compat.v1.placeholder(tf.float32, shape=[None, 10])
-y_place = tf.compat.v1.placeholder(tf.float32, shape=[None, 1])
-
-w = tf.compat.v1.Variable(tf.compat.v1.random_normal([10,1], name='weight')) #정규분포의 의한 랜덤값 10개가 들어감.
-b = tf.compat.v1.Variable(tf.compat.v1.zeros([1], name='bias'))
-
-#2. 모델
+# Define the model
 hypothesis = tf.compat.v1.matmul(x, w) + b
 
-#3. 컴파일
-loss = tf.reduce_mean(tf.square(hypothesis - y)) #mse
+# Define the loss function
+loss = tf.compat.v1.reduce_mean(tf.compat.v1.square(hypothesis - y))
 
-# optimizer = tf.train.GradientDescentOptimizer(learning_rate= 0.0001)
-optimizer = tf.train.AdamOptimizer(learning_rate=0.0001)
-
+# Define the optimizer
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.0001)
 train = optimizer.minimize(loss)
 
-
-#3-2. 훈련
+# Create a session and initialize variables
 sess = tf.compat.v1.Session()
 sess.run(tf.compat.v1.global_variables_initializer())
 
-epochs = 101
-for epochs in range(epochs):
-     _, loss_val, w_val, b_val = sess.run([train ,loss, w, b], feed_dict={x: x_place, y: y_place})
-     if epochs % 10 == 0:
-        print(epochs, loss_val, w_val)
-    # 예측값 계산
-     y_pred = sess.run(hypothesis, feed_dict={x: x_place})
+# Training
+epochs = 39099
+for epoch in range(epochs):
+    _, loss_val = sess.run([train, loss], feed_dict={x: X_train, y: y_train})
+    if epoch % 100 == 0:
+        print("Epoch:", epoch, "Loss:", loss_val)
 
-    # TensorFlow 텐서를 NumPy 배열로 변환
-     y_data_np = np.array(y_place)
-     y_pred_np = np.array(y_pred)
+# Evaluation
+y_train_pred = sess.run(hypothesis, feed_dict={x: X_train})
+y_test_pred = sess.run(hypothesis, feed_dict={x: X_test})
 
-    # R2 스코어 계산
-     r2 = r2_score(y_data_np, y_pred_np)
+r2_train = r2_score(y_train, y_train_pred)
+r2_test = r2_score(y_test, y_test_pred)
 
-     print("R2 Score:", r2)
+print("R2 Score (Train):", r2_train)
+print("R2 Score (Test):", r2_test)
+
+# Close the session
+sess.close()
