@@ -17,7 +17,7 @@ loss = tf.reduce_mean(tf.square(hypothesis - y)) #mse
 lr = 0.1
 
 # gradient = tf.reduce_mean((w * x -y) * x) 틀림
-gradient = tf.reduce_mean((x * w -y) * x) #  w = w-lr * 미분e/ 미분w 이랑 연관이 있음. / 이게 gradient의 식(미분값)
+gradient = tf.reduce_mean((x * w -y) * x) #  w = w-lr * 미분e/ 미분w 이랑 연관이 있음. / 이게 gradient의 식(미분값) 
 # gradient = tf.reduce_mean((hypothesis -y) * x) #-> 이거랑 같음
 
 descent = w - lr * gradient #gradient가 미분e/ 미분w임. ===로스의 변환값.
