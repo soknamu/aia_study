@@ -2,30 +2,29 @@ import tensorflow as tf
 import numpy as np
 tf.compat.v1.set_random_seed(337)
 from sklearn.metrics import accuracy_score
-from sklearn.datasets import load_iris
+from sklearn.datasets import load_wine
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 
 # 1. 데이터
-x, y = load_iris(return_X_y=True)
+x, y = load_wine(return_X_y=True)
+# One-hot 인코딩
+encoder = OneHotEncoder(sparse=False)
+y = encoder.fit_transform(y.reshape(-1,1))
 
+print(x.shape, y.shape)
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=123, train_size=0.8, stratify=y)
 
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-# One-hot 인코딩
-encoder = OneHotEncoder(sparse=False)
-y_train = encoder.fit_transform(y_train.reshape(-1, 1))
-y_test = encoder.transform(y_test.reshape(-1, 1))
-
 # 2. 모델
-x = tf.compat.v1.placeholder(tf.float32, shape=[None, 4])
+x = tf.compat.v1.placeholder(tf.float32, shape=[None, 13])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 3])
-w = tf.Variable(tf.random.normal([4, 3]), name='weight')
-w1 = tf.compat.v1.Variable(tf.random.normal([4, 50], dtype=tf.float32), name='weight')
+
+w1 = tf.compat.v1.Variable(tf.random.normal([13, 50], dtype=tf.float32), name='weight')
 b1 = tf.compat.v1.Variable(tf.zeros([50], dtype=tf.float32), name='bias')
 layer1 = tf.compat.v1.matmul(x, w1) + b1
 
@@ -48,11 +47,11 @@ hypothesis = tf.nn.softmax(tf.matmul(layer4, w5) + b5)
 # 3. 컴파일, 훈련
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=hypothesis))
 
-optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.009)
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-5)
 train = optimizer.minimize(loss)
 
 # 4. 모델 훈련
-epochs = 18000
+epochs = 10000
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
 

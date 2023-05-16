@@ -1,6 +1,5 @@
 import tensorflow as tf
 import numpy as np
-tf.compat.v1.set_random_seed(337)
 from sklearn.metrics import accuracy_score
 from sklearn.datasets import load_iris
 from sklearn.preprocessing import StandardScaler
@@ -9,22 +8,21 @@ from sklearn.preprocessing import OneHotEncoder
 
 # 1. 데이터
 x, y = load_iris(return_X_y=True)
+# One-hot 인코딩
+encoder = OneHotEncoder(sparse=False)
+y = encoder.fit_transform(y.reshape(-1, 1))
 
+print(x.shape, y.shape)
 x_train, x_test, y_train, y_test = train_test_split(x, y, random_state=123, train_size=0.8, stratify=y)
 
 scaler = StandardScaler()
 x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
-# One-hot 인코딩
-encoder = OneHotEncoder(sparse=False)
-y_train = encoder.fit_transform(y_train.reshape(-1, 1))
-y_test = encoder.transform(y_test.reshape(-1, 1))
-
 # 2. 모델
 x = tf.compat.v1.placeholder(tf.float32, shape=[None, 4])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 3])
-w = tf.Variable(tf.random.normal([4, 3]), name='weight')
+
 w1 = tf.compat.v1.Variable(tf.random.normal([4, 50], dtype=tf.float32), name='weight')
 b1 = tf.compat.v1.Variable(tf.zeros([50], dtype=tf.float32), name='bias')
 layer1 = tf.compat.v1.matmul(x, w1) + b1
@@ -57,21 +55,21 @@ with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
 
     for step in range(epochs):
-        _, loss_val = sess.run([train, loss], feed_dict={x: x_train, y: y_train.tolist()})
+        _, loss_val = sess.run([train, loss], feed_dict={x: x_train, y: y_train})
 
         if step % 100 == 0:
             print("Step:", step, "Loss:", loss_val)
 
-    # 훈련된 모델을 통해 예측값 출력
-    y_pred = sess.run(hypothesis, feed_dict={x: x_test})
-    print("Predictions:", y_pred)
+    # # 훈련된 모델을 통해 예측값 출력
+    # y_pred_train = sess.run(hypothesis, feed_dict={x: x_train})
+    # y_pred_train = np.argmax(y_pred_train, axis=1)
 
-    # 평가 지표 계산
-    y_pred_label = np.argmax(y_pred, axis=1)
-    y_test_label = np.argmax(y_test, axis=1)
+    y_pred_test = sess.run(hypothesis, feed_dict={x: x_test})
+    y_pred_test = np.argmax(y_pred_test, axis=1)
 
-    accuracy = accuracy_score(y_test_label, y_pred_label)
-    print("Accuracy:", accuracy)
+    # 정확도 계산
+    # acc_train = accuracy_score(np.argmax(y_train, axis=1), y_pred_train)
+    acc_test = accuracy_score(np.argmax(y_test, axis=1), y_pred_test)
 
-
-
+    # print("Train Accuracy:", acc_train)
+    print("Test Accuracy:", acc_test)
