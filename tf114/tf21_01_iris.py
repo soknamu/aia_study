@@ -24,7 +24,7 @@ y_test = encoder.transform(y_test.reshape(-1, 1))
 # 2. 모델
 x = tf.compat.v1.placeholder(tf.float32, shape=[None, 4])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 3])
-w = tf.Variable(tf.random.normal([4, 3]), name='weight')
+
 w1 = tf.compat.v1.Variable(tf.random.normal([4, 50], dtype=tf.float32), name='weight')
 b1 = tf.compat.v1.Variable(tf.zeros([50], dtype=tf.float32), name='bias')
 layer1 = tf.compat.v1.matmul(x, w1) + b1
@@ -48,11 +48,11 @@ hypothesis = tf.nn.softmax(tf.matmul(layer4, w5) + b5)
 # 3. 컴파일, 훈련
 loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits_v2(labels=y, logits=hypothesis))
 
-optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.009)
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-5)
 train = optimizer.minimize(loss)
 
 # 4. 모델 훈련
-epochs = 18000
+epochs = 10000
 with tf.compat.v1.Session() as sess:
     sess.run(tf.compat.v1.global_variables_initializer())
 
