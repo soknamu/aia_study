@@ -6,8 +6,6 @@ from sklearn.metrics import accuracy_score
 x_data = np.array([[0,0], [0,1], [1,0], [1,1]], dtype=np.float32) #(4,2)
 y_data = np.array([[0], [1], [1], [0]], dtype=np.float32) #(4,1)
 
-# [실습] 맹그러봐!!!!!!!!
-
 x = tf.compat.v1.placeholder(tf.float32, shape=[None, 2])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 1])
 
@@ -18,44 +16,62 @@ b = tf.compat.v1.Variable(tf.compat.v1.zeros([1]), dtype=tf.float32)
 hypothesis = tf.compat.v1.sigmoid(tf.compat.v1.matmul(x,w)+ b)
 
 #3-1. 컴파일
-# loss = tf.reduce_mean(tf.square(hypothesis - y))     # mse
-loss = tf.reduce_mean(y*tf.log(hypothesis) + (1-y) * tf.log(1-hypothesis)) # = 'binary_crossentropy'
+loss = -tf.reduce_mean(y*tf.log(hypothesis) + (1-y) * tf.log(1-hypothesis))
 
-optimizer = tf.compat.v1.train.AdadeltaOptimizer(learning_rate=1e-2)
+optimizer = tf.compat.v1.train.AdadeltaOptimizer(learning_rate=1e-6)
 train = optimizer.minimize(loss)
 
-#3-2. 훈련
-sess = tf.compat.v1.Session()
-sess.run(tf.compat.v1.global_variables_initializer())
+predicted = tf.cast(hypothesis > 0.5,dtype=tf.float32) #cast -> True아니면 False
+accuracy =tf.reduce_mean(tf.cast(tf.equal(predicted,y), dtype=tf.float32))
+#accuracy = false, True로 반환 -> float32 1.0, 2.0 이렇게됨. -> 숫자의 나누기 4가 들어가서 0.5가됨.
 
-epochs = 25000
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
     
-for step in range(epochs):
-    cost_val, _ , w_val, b_val= sess.run([loss, train, w, b], 
-                                feed_dict={x: x_data, y: y_data})
+    for epoch in range(7501):
+        loss_val, _ = sess.run([loss, train], feed_dict = {x: x_data, y : y_data})
         
-    if step % 20 == 0:
-        print(step, 'loss : ', cost_val)
+        if  epoch % 100 == 0:
+            print(epoch, loss_val)
+            
+    h, p, a =sess.run([hypothesis, predicted, accuracy],
+             feed_dict = {x : x_data, y : y_data})
+    print("예측값 :", h, "\n 원래 값 :", p, "\n Accuracy :", a)
 
-#4. 평가, 예측            
-x_test = tf.compat.v1.placeholder(tf.float32, shape = [None, 2])
-# y_predict = x_data * w_val + b_val    # 넘파이랑 텐서랑 행렬곱했더니 에러남, 그래서 아래 matmul 사용해야 됨
-y_predict = tf.sigmoid(tf.matmul(x_test, w_val)) + b_val
-# y_predict = tf.cast(y_predict> 0,5, dtype=tf.float32) 띄어쓰기 해야됨.
-y_predict = tf.cast(y_predict > 0.5, dtype=tf.float32)
+# 예측값 : [[0.44682083]
+#         [0.54059273]
+#         [0.45738983]
+#         [0.55116975]]
+#  원래 값 : [[0.]
+#             [1.]
+#             [0.]
+#             [1.]]
+#  Accuracy : 0.5
 
-y_aaa = sess.run(y_predict, feed_dict={x_test:x_data})
+# #3-2. 훈련
+# sess = tf.compat.v1.Session()
+# sess.run(tf.compat.v1.global_variables_initializer())
 
-# print(y_aaa)
-# [[0.86980325]
-#  [0.9538312 ]
-#  [0.8634029 ]
-#  [0.9769021 ]
-#  [0.98375046]
-#  [0.97561634]]
-#print(type(y_aaa))  # <class 'numpy.ndarray'>
+# epochs = 5000
 
-acc = accuracy_score(y_aaa, y_data)
-print('r2 : ', acc)
+# for epoch in range(epochs):
+#     cost_val, _ , w_val, b_val= sess.run([loss, train, w, b], 
+#                                 feed_dict={x: x_data, y: y_data})
+        
+#     if epoch % 20 == 0:
+#         print(epoch, 'loss : ', cost_val)
 
-sess.close()
+# #4. 평가, 예측            
+# x_test = tf.compat.v1.placeholder(tf.float32, shape = [None, 2])
+
+# y_predict = tf.sigmoid(tf.matmul(x_test, w_val)) + b_val
+
+# y_predict = tf.cast(y_predict > 0.5, dtype=tf.float32)
+
+# y_aaa = sess.run(y_predict, feed_dict={x_test:x_data})
+
+# acc = accuracy_score(y_aaa, y_data)
+# print('acc : ', acc)
+
+# sess.close()

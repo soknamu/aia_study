@@ -46,7 +46,7 @@ model.add(Dense(4))
 model.add(Dense(4))
 model.add(Dense(4))
 model.add(Dense(4))
-model.add(Dense(4))
+model.add(Dense(1))
 
 #3. 컴파일 훈련
 

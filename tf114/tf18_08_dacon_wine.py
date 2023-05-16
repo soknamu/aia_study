@@ -41,7 +41,7 @@ b = tf.compat.v1.Variable(tf.zeros([1, 3], dtype=tf.float32), name='bias')
 hypothesis = tf.nn.softmax(tf.matmul(x_place, w) + b)
 
 # 3-1 컴파일
-loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.squeeze(y_place), logits=hypothesis))
+loss = -tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=tf.squeeze(y_place), logits=hypothesis))
 train = tf.compat.v1.train.GradientDescentOptimizer(learning_rate=1e-9).minimize(loss)
 
 sess = tf.compat.v1.Session()
