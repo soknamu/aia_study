@@ -45,7 +45,7 @@ hypothesis = tf.compat.v1.matmul(layer4, w5) + b5
 # 3. 컴파일, 훈련
 loss = tf.reduce_mean(tf.square(y - hypothesis))
 
-optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-5)
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.01)
 train = optimizer.minimize(loss)
 
 # 4. 모델 훈련
@@ -66,3 +66,4 @@ with tf.compat.v1.Session() as sess:
     # 평가 지표 계산
     accuracy = r2_score(y_test, y_pred)
     print("R2 Score:", accuracy)
+# R2 Score: 0.603281972568315

@@ -14,7 +14,6 @@ path = './_data/kaggle_bike/'
 train_csv = pd.read_csv(path + 'train.csv', index_col=0)
 test_csv = pd.read_csv(path + 'test.csv', index_col=0)
 # Reshape y to have shape (n_samples, 1)
-train_csv = train_csv.dropna()
 x = train_csv.drop(['count','casual','registered'], axis=1)
 y = train_csv['count'].values
 y = y.reshape(-1, 1)
@@ -52,7 +51,7 @@ hypothesis = tf.compat.v1.matmul(layer4, w5) + b5
 # 3. 컴파일, 훈련
 loss = tf.reduce_mean(tf.square(y - hypothesis))
 
-optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=1e-5)
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=0.001)
 train = optimizer.minimize(loss)
 
 # 4. 모델 훈련
@@ -73,3 +72,5 @@ with tf.compat.v1.Session() as sess:
     # 평가 지표 계산
     r2 = r2_score(y_test, y_pred)
     print("R2 Score:", r2)
+    
+#R2 Score: 0.2461598368480541

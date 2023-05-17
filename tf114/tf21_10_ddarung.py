@@ -26,10 +26,10 @@ x_train = scaler.fit_transform(x_train)
 x_test = scaler.transform(x_test)
 
 # 2. 모델
-x = tf.compat.v1.placeholder(tf.float32, shape=[None, 8])
+x = tf.compat.v1.placeholder(tf.float32, shape=[None, 9])
 y = tf.compat.v1.placeholder(tf.float32, shape=[None, 1])
 
-w1 = tf.compat.v1.Variable(tf.random.normal([8, 50], dtype=tf.float32), name='weight')
+w1 = tf.compat.v1.Variable(tf.random.normal([9, 50], dtype=tf.float32), name='weight')
 b1 = tf.compat.v1.Variable(tf.zeros([50], dtype=tf.float32), name='bias')
 layer1 = tf.compat.v1.matmul(x, w1) + b1
 
@@ -73,3 +73,5 @@ with tf.compat.v1.Session() as sess:
     # 평가 지표 계산
     r2 = r2_score(y_test, y_pred)
     print("R2 Score:", r2)
+    
+# R2 Score: 0.577277419239229
