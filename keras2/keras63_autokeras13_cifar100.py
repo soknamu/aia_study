@@ -5,7 +5,7 @@ from keras.datasets import cifar100
 (x_train, y_train), (x_test, y_test) = cifar100.load_data()
 
 # AutoKeras 이미지 분류 모델 생성
-model = ak.ImageClassifier(max_trials=1, overwrite=False)  # 최대 시도 횟수 지정
+model = ak.ImageClassifier(max_trials=2, overwrite=False)  # 최대 시도 횟수 지정
 
 # 모델 훈련
 model.fit(x_train, y_train, epochs=100)
