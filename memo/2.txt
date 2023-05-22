@@ -21,3 +21,39 @@ hyper-parameter tuning
 MLP: Multi Layer Perceptron
 
 과제 2. 행렬 예제 만들기
+
+def build_model(drop=0.5, optimizer='adam', activation='relu', 
+                layers=3, nodes=[64, 64, 64], lr=0.001):
+    inputs = Input(shape=(784,), name='inputs')
+    x = Dense(nodes[0], activation=activation, name='hidden1')(inputs)
+    x = Dropout(drop)(x)
+    for i in range(1, layers):
+        x = Dense(nodes[i], activation=activation, name=f'hidden{i+1}')(x)
+        x = Dropout(drop)(x)
+    x = Dense(256, activation=activation, name='hidden4')(x)
+    x = Dropout(drop)(x)
+    outputs = Dense(10, activation='softmax', name='outputs')(x)
+
+    model = Model(inputs=inputs, outputs=outputs)
+    
+    model.compile(optimizer=optimizer, metrics=['acc'], loss='sparse_categorical_crossentropy')
+    return model
+
+def create_hyperparameter():
+    batchs = [100, 200, 300, 400, 500]
+    optimizers = ['adam', 'rmsprop', 'adadelta']
+    dropouts = [0.2, 0.3, 0.4, 0.5]
+    activations = ['relu', 'elu', 'selu', 'linear']
+    learning_rates = [0.1, 0.01, 0.001, 0.0001]
+    nodes = [[32, 32, 32], [64, 64, 64], [128, 128, 128], [256, 256, 256]]
+    layers = [2, 3, 4, 5]
+    
+    return {
+        'batch_size': batchs,
+        'optimizer': optimizers,
+        'drop': dropouts,
+        'activation': activations,
+        'lr': learning_rates,
+        'layers': layers,
+        'nodes': nodes
+    }
