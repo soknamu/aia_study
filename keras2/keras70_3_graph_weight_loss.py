@@ -1,5 +1,3 @@
-#keras32 mnist3
-
 from tensorflow.keras.datasets import mnist
 from tensorflow.python.keras.models import Sequential,load_model
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler

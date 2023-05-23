@@ -1,0 +1,21 @@
+'''
+C:\Users\user>c:
+
+C:\Users\user>cd | 이거약자.
+
+C:\>cd study
+
+C:\study>cd _save
+
+C:\study\_save>cd _tensorboard
+지정된 경로를 찾을 수 없습니다.
+
+C:\study\_save>cd _tensorboard
+
+C:\study\_save\_tensorboard>cd _graph
+
+C:\study\_save\_tensorboard\_graph>tensorboard --logdir=.
+
+웹키고 하면됨. http://localhost:6006/
+              http://127.0.0.1:6006/
+'''

@@ -7,11 +7,13 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from tensorflow.python.keras.layers import GlobalAveragePooling2D
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-from tensorflow.python.keras.callbacks import EarlyStopping,History
+from tensorflow.python.keras.callbacks import EarlyStopping,History,TensorBoard,ModelCheckpoint,ReduceLROnPlateau
 import numpy as np
 from sklearn.metrics import accuracy_score
 import pandas as pd
 import tensorflow as tf
+import time
+
 tf.random.set_seed(337)
 
 # 1. 데이터
@@ -44,10 +46,17 @@ model.summary()
 
 # 3. 컴파일, 훈련
 hist = model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
-es = EarlyStopping(monitor='val_acc', mode='max', patience=100, verbose=1, restore_best_weights=True)
-import time
+es = EarlyStopping(monitor='val_acc', mode='min', patience=100, verbose=1, restore_best_weights=True)
+reduce_lr = ReduceLROnPlateau(monitor='val_loss', patience=10, mode='auto', verbose=1,
+                              factor=0.8)
+tb = TensorBoard(log_dir='C:/Users/user/Documents/GitHub/aia_study/_save/_tensorboard/_graph',
+                 histogram_freq=0,
+                 write_graph=True,
+                 write_images=True,)
+
 start = time.time()
-hist = model.fit(x_train, y_train, epochs=20, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=30, batch_size=128, verbose=1, 
+                 validation_split=0.2, callbacks=[es, reduce_lr, tb])
 end = time.time()
 
 # 걸린 시간 계산
@@ -68,18 +77,6 @@ print(f'acc : {acc}')
 # 출력
 print("걸린 시간: {}분 {}초".format(int(minutes), int(seconds)))
 
-# model.save('./_save/keras70_1_mnist_grape.h5')
-# history 객체 저장
-# import pickle
-
-# with open('./_save/keras70_1_mnist_grape.pkl', 'wb') as f:
-#     pickle.dump(hist.history, f)
-    
-# # 가중치 저장
-# weights = model.get_weights()
-# np.save('./_save/keras70_1_mnist_grape_weights.npy', weights)
-
-# print(hist) <tensorflow.python.keras.callbacks.History object at 0x0000029F890A11F0>
 import joblib
 joblib.dump(hist.history, './_save/keras70_1_history.dat')
 
