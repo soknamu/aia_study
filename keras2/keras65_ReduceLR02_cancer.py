@@ -35,9 +35,9 @@ model.compile(loss='binary_crossentropy', optimizer=optimizer,
 
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau
 
-es = EarlyStopping(monitor='acc', patience=20, mode='max', verbose=1)
+es = EarlyStopping(monitor='acc', patience=200, mode='max', verbose=1)
 rlr = ReduceLROnPlateau(monitor='acc', patience=10, mode='auto', verbose=1, factor=0.5)
-model.fit(x_train, y_train, epochs=500, batch_size=32, verbose=1, validation_split=0.2,
+model.fit(x_train, y_train, epochs=5000, batch_size=32, verbose=1, validation_split=0.2,
           callbacks=[es, rlr])
 
 #4. 평가, 예측
