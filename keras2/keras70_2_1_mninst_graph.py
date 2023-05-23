@@ -35,14 +35,23 @@ with open('./_save/keras70_1_mnist_grape.pkl', 'rb') as f:
 
 import matplotlib.pyplot as plt
 plt.figure(figsize=(9,5))
+plt.subplot(2,1,1)
 plt.plot(hist['loss'], marker='.', c='red', label='loss')
 plt.plot(hist['val_loss'], marker='.', c='blue', label='val_loss')
+plt.grid
+plt.title('loss')
+plt.xlabel('loss')
+plt.ylabel('epochs')
+plt.legend(loc ='upper right')
+
+plt.subplot(2,1,2)
 plt.plot(hist['acc'], marker='.', c='red', label='acc')
 plt.plot(hist['val_acc'], marker='.', c='blue', label='val_acc')
-plt.title('Training History')
-plt.xlabel('Epochs')
-plt.ylabel('Metrics')
-plt.legend()
+plt.grid
+plt.title('acc')
+plt.xlabel('acc')
+plt.ylabel('epochs')
+plt.legend(['acc','val_acc'])
 plt.show()
 
 # # 1

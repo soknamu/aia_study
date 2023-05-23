@@ -7,7 +7,7 @@ from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Conv2D, Flatten, MaxPooling2D
 from tensorflow.python.keras.layers import GlobalAveragePooling2D
 from sklearn.preprocessing import MinMaxScaler, StandardScaler, MaxAbsScaler, RobustScaler
-from tensorflow.python.keras.callbacks import EarlyStopping
+from tensorflow.python.keras.callbacks import EarlyStopping,History
 import numpy as np
 from sklearn.metrics import accuracy_score
 import pandas as pd
@@ -47,7 +47,7 @@ hist = model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=
 es = EarlyStopping(monitor='val_acc', mode='min', patience=100, verbose=1, restore_best_weights=True)
 import time
 start = time.time()
-hist = model.fit(x_train, y_train, epochs=10, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=20, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
 end = time.time()
 
 # 걸린 시간 계산
@@ -56,7 +56,6 @@ elapsed_time = end - start
 # 분과 초로 변환
 minutes = elapsed_time // 60
 seconds = elapsed_time % 60
-
 
 # 4. 평가, 예측
 result = model.evaluate(x_test, y_test)
@@ -71,10 +70,19 @@ print("걸린 시간: {}분 {}초".format(int(minutes), int(seconds)))
 
 # model.save('./_save/keras70_1_mnist_grape.h5')
 # history 객체 저장
-import pickle
+# import pickle
 
-with open('./_save/keras70_1_mnist_grape.pkl', 'wb') as f:
-    pickle.dump(hist.history, f)
+# with open('./_save/keras70_1_mnist_grape.pkl', 'wb') as f:
+#     pickle.dump(hist.history, f)
+    
+# # 가중치 저장
+# weights = model.get_weights()
+# np.save('./_save/keras70_1_mnist_grape_weights.npy', weights)
+
+# print(hist) <tensorflow.python.keras.callbacks.History object at 0x0000029F890A11F0>
+import joblib
+joblib.dump(hist.history, './_save/keras70_1_history.dat')
+
 ################################### 시각화 ##########################################
 import matplotlib.pyplot as plt
 plt.figure(figsize=(9,5))
