@@ -45,5 +45,5 @@ plt.xlabel('Epochs')
 plt.ylabel('Metrics')
 plt.legend()
 plt.show()
-
+#미완성
 
