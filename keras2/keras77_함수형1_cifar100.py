@@ -1,11 +1,13 @@
-import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense,Flatten
+ # 함수형 맹그러봐!
+import time
+from tensorflow.keras.layers import Flatten, Dense, Input, GlobalAveragePooling2D
+from tensorflow.keras.models import Model
 from tensorflow.keras.applications import VGG16
 from tensorflow.keras.datasets import cifar100
+from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.metrics import accuracy_score
-from tensorflow.keras.utils import to_categorical
+import numpy as np
 import tensorflow as tf
 
 tf.random.set_seed(337)
@@ -16,30 +18,25 @@ x_test = x_test/255.
 
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
-vgg16 = VGG16(weights='imagenet', include_top=False,
-              input_shape=(32,32,3), )
 
-vgg16.trainable = False # 가중치 동결.
+input1 = Input(shape=(32, 32, 3))
+vgg16 = VGG16(weights='imagenet', include_top=False)(input1)
+gap1 = GlobalAveragePooling2D()(vgg16)
+# flt = Flatten()(vgg16)
+# hidden1 = Dense(100)(flt)
+hidden1 = Dense(100)(gap1)
+output1 = Dense(100, activation='softmax')(hidden1)
 
-model = Sequential()
-model.add(vgg16)
-model.add(Flatten())
-model.add(Dense(100))
-model.add(Dense(100, activation='softmax'))
-
-# model.trainable = True
+model = Model(inputs = input1, outputs = output1)
 
 model.summary()
-
-print(len(model.weights))
-print(len(model.trainable_weights))
 
 # 3. 컴파일, 훈련
 hist = model.compile(loss='categorical_crossentropy', optimizer='adam', metrics='acc')
 es = EarlyStopping(monitor='val_acc', mode='max', patience=100, verbose=1, restore_best_weights=True)
 import time
 start = time.time()
-hist = model.fit(x_train, y_train, epochs=20, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
+hist = model.fit(x_train, y_train, epochs=200, batch_size=128, verbose=1, validation_split=0.2, callbacks=[es])
 end = time.time()
 
 # 걸린 시간 계산
@@ -59,3 +56,8 @@ acc = accuracy_score(np.argmax(y_test,axis=1), np.argmax(y_predict,axis=1))
 print(f'acc : {acc}')
 # 출력
 print("걸린 시간: {}분 {}초".format(int(minutes), int(seconds)))
+
+# loss : 1.391618251800537
+# acc 0.8122000098228455
+# acc : 0.8122
+# 걸린 시간: 17분 53초
