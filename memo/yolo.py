@@ -23,3 +23,4 @@ while cap.isOpened():
         break
 cap.release()
 cv2.destroyAllWindows()
+#욜로 동영상실행
