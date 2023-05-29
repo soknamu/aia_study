@@ -1,7 +1,7 @@
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator #이미지 전처리 데이터
-path = 'd:/study_data/_data/cat_dog/PetImages/'
-save_path = 'd:/study_data/_save/cat_dog/'
+path = 'c:/study/_data/cat_dog/PetImages/'
+save_path = 'c:/study/_save/cat_dog/'
 train_datagen = ImageDataGenerator(
     rescale= 1./255, #스케일링 하겠다.(. 붙히는 이유 : 부동소수점으로 연산, 정규화(nonaliazation))
     # horizontal_flip=True, #(가로뒤집기)
@@ -20,7 +20,7 @@ train_datagen = ImageDataGenerator(
 
 
 xy_train = train_datagen.flow_from_directory(
-    'd:/study_data/_data/cat_dog/PetImages/', #ad normal 폴더로 들어가지 않는 이유. 라벨값이 정해져 있기 때문에. 그래서 상위폴더로 지정해줌.
+    'c:/study/_data/cat_dog/PetImages/', #ad normal 폴더로 들어가지 않는 이유. 라벨값이 정해져 있기 때문에. 그래서 상위폴더로 지정해줌.
     target_size=(169, 169), #모은 사진들을 확대 또는 축소를 해서 크기를 무조건 200 * 200으로 만듬. (크든 작든)
     batch_size= 24998,  #5장씩 쓰겠다. #전체데이터를 쓸라면 160(데이터의 최대의 개수만큼(그이상도 가능.))넣어라!
     class_mode= 'binary',#데이터가 2개밖에 없기때문에 (수치화 되서 만들어줌) 카테고리컬은

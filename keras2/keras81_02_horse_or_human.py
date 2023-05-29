@@ -19,8 +19,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 
 # 넘파이까지 저장 
-path = 'd:/study/_data/horse_or_human/'
-save_path = 'd:/study/_save/horse_or_human/'
+path = 'c:/study/_data/horse_or_human/'
+save_path = 'c:/study/_save/horse_or_human/'
 
 
 #1. 데이터 
@@ -39,10 +39,10 @@ save_path = 'd:/study/_save/horse_or_human/'
 # y = xy[0][1]
 
 
-x_train = np.load(save_path + 'keras56_x_train.npy')
-x_test = np.load(save_path + 'keras56_x_test.npy')
-y_train = np.load(save_path + 'keras56_y_train.npy')
-y_test = np.load(save_path + 'keras56_y_test.npy')
+x_train = np.load(save_path + 'keras56_1_x_train.npy')
+x_test = np.load(save_path + 'keras56_1_x_test.npy')
+y_train = np.load(save_path + 'keras56_1_y_train.npy')
+y_test = np.load(save_path + 'keras56_1_y_test.npy')
 
 print(x_train.shape, y_train.shape) #(718, 150, 150, 3) (718,)
 
@@ -103,7 +103,7 @@ print("acc:", results[1])
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions
 
-path = 'D:\study\_data\pmk.jpg'
+path = './_data/sok.jpg'
 # model = VGG16(weights='imagenet')
 
 img = image.load_img(path, target_size=(150,150))

@@ -11,7 +11,7 @@ model = ResNet50(weights='imagenet')    #imagenet가중치 사용
 
 # path = 'D:\study\_data\cat_dog\PetImages\Dog\\4.jpg'
 # path = 'D:\study\_data\suit.png'
-path = 'D:\study\_data\pmk.jpg'
+path = './_data/sok.jpg'
 
 img = image.load_img(path, target_size=(224,224))
 print(img) #<PIL.Image.Image image mode=RGB size=224x224 at 0x1F88F30D070>

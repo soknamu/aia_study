@@ -19,10 +19,10 @@ model_list = [VGG16, VGG19, ResNet50, ResNet50V2, ResNet101, ResNet101V2, ResNet
 
 for model in model_list:
     model = model(weights='imagenet', include_top=False)
-    model.trainable = False
+    model.trainable = True
     #model.summary()    
     print("================================")
-    print("모델명:", model.__name__)
+    print("모델명:", model.name)
     print("전체 가중치 개수:", len(model.weights))
     print("전체 훈련가능 개수:", len(model.trainable_weights))
 

@@ -19,8 +19,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 
 # 넘파이까지 저장 
-path = 'd:/study/_data/men_women/'
-save_path = 'd:/study/_save/men_women/'
+path = 'c:/study/_data/men_women/'
+save_path = 'c:/study/_save/men_women/'
 
 
 #1. 데이터 
@@ -39,10 +39,10 @@ save_path = 'd:/study/_save/men_women/'
 # y = xy[0][1]
 
 
-x_train = np.load(save_path + 'keras56_x_train.npy')
-x_test = np.load(save_path + 'keras56_x_test.npy')
-y_train = np.load(save_path + 'keras56_y_train.npy')
-y_test = np.load(save_path + 'keras56_y_test.npy')
+x_train = np.load(save_path + 'keras56_7_x_train.npy')
+x_test = np.load(save_path + 'keras56_7_x_test.npy')
+y_train = np.load(save_path + 'keras56_7_y_train.npy')
+y_test = np.load(save_path + 'keras56_7_y_test.npy')
 
 print(x_train.shape, y_train.shape) #(718, 150, 150, 3) (718,)
 
@@ -84,7 +84,7 @@ learning_rate = 0.1
 optimizer = Adam(learning_rate= learning_rate)
 model.compile(loss = 'binary_crossentropy', optimizer = optimizer, metrics=['acc'])
 
-model.fit(x_train, y_train, epochs =10, batch_size=512, verbose=1, validation_split=0.2,
+model.fit(x_train, y_train, epochs =20, batch_size=256, verbose=1, validation_split=0.2,
          )
 
 
@@ -103,7 +103,7 @@ print("acc:", results[1])
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions
 
-path = 'D:\study\_data\pmk.jpg'
+path = './_data/sok.jpg'
 
 img = image.load_img(path, target_size=(150,150))
 # 이미지 변환(이미지 수치화 )

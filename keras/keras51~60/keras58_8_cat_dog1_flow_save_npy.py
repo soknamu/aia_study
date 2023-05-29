@@ -1,8 +1,8 @@
 import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator #이미지 전처리 데이터
 from sklearn.model_selection import train_test_split
-path = 'd:/study_data/_data/cat_dog/PetImages/'
-save_path = 'd:/study_data/_save/cat_dog/'
+path = 'c:/study/_data/cat_dog/PetImages/'
+save_path = 'c:/study/_save/cat_dog/'
 datagen = ImageDataGenerator(
     rescale= 1./255,
     horizontal_flip=True,
@@ -21,8 +21,8 @@ augment_size = 2500
 
 
 cat_dog = datagen.flow_from_directory(path,
-            target_size=(150,150),
-            batch_size=900,
+            target_size=(144,144),
+            batch_size=24998,
             class_mode='categorical',
             color_mode= 'rgb',
             shuffle= True)

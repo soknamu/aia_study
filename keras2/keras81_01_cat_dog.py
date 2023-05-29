@@ -19,8 +19,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 
 # 넘파이까지 저장 
-path = 'd:/study/_data/cat_dog/PetImages/'
-save_path = 'd:/study/_save/cat_dog/'
+path = 'c:/study/_data/cat_dog/PetImages/'
+save_path = 'c:/study/_save/cat_dog/'
 
 #1. 데이터 
 # #이미지 전처리 (수치화만)
@@ -37,20 +37,16 @@ save_path = 'd:/study/_save/cat_dog/'
 # x = xy[0][0]
 # y = xy[0][1]
 
-
-x_train = np.load(save_path + 'keras56_x_train.npy')
-x_test = np.load(save_path + 'keras56_x_test.npy')
-y_train = np.load(save_path + 'keras56_y_train.npy')
-y_test = np.load(save_path + 'keras56_y_test.npy')
-
+x_train = np.load(save_path + 'keras58_8_cat_dog1_x_train.npy')
+x_test = np.load(save_path + 'keras58_8_cat_dog1_x_test.npy')
+y_train = np.load(save_path + 'keras58_8_cat_dog1_y_train.npy')
+y_test = np.load(save_path + 'keras58_8_cat_dog1_y_test.npy')
 
 print(np.unique(y_train,return_counts=True)) 
 # (array([0., 1.], dtype=float32), array([8663, 8835], dtype=int64))
 
-
 x_train = x_train / 255.
 x_test = x_test / 255.
-
 
 #2. 모델 
 vgg16 = VGG16(weights='imagenet',  #가중치는 이미지넷에서 가져다 사용
@@ -83,7 +79,7 @@ optimizer = Adam(learning_rate= learning_rate)
 model.compile(loss = 'binary_crossentropy', optimizer = optimizer, metrics=['acc'])
 
 
-model.fit(x_train, y_train, epochs =1, batch_size=512, verbose=1, validation_split=0.2)
+model.fit(x_train, y_train, epochs =10, batch_size=512, verbose=1, validation_split=0.2)
 
 
 #4. 평가, 예측 
@@ -100,7 +96,7 @@ print("acc:", results[1])
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.resnet import preprocess_input, decode_predictions   
 
-path = 'D:\study\_data\pmk.jpg'
+path = './_data/sok.jpg'
 
 img = image.load_img(path, target_size= (100, 100, 3))
 print(img)  # <PIL.Image.Image image mode=RGB size=224x224 at 0x1F8B55382B0>

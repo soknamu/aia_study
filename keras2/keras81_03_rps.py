@@ -20,7 +20,7 @@ from sklearn.model_selection import train_test_split
 
 # 넘파이까지 저장 
 path = 'd:/study/_data/rps/'
-save_path = 'd:/study/_save/rps/'
+save_path = 'c:/study/_save/rps/'
 
 
 #1. 데이터 
@@ -39,10 +39,10 @@ save_path = 'd:/study/_save/rps/'
 # y = xy[0][1]
 
 
-x_train = np.load(save_path + 'keras56_x_train.npy')
-x_test = np.load(save_path + 'keras56_x_test.npy')
-y_train = np.load(save_path + 'keras56_y_train.npy')
-y_test = np.load(save_path + 'keras56_y_test.npy')
+x_train = np.load(save_path + 'keras56_6_x_train.npy')
+x_test = np.load(save_path + 'keras56_6_x_test.npy')
+y_train = np.load(save_path + 'keras56_6_y_train.npy')
+y_test = np.load(save_path + 'keras56_6_y_test.npy')
 
 print(x_train.shape, y_train.shape) #(1764, 150, 150, 3) (1764, 3)
 
