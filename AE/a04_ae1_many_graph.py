@@ -92,7 +92,7 @@ decoded_imgs_713 = model_713.predict(x_test_noised)
 import matplotlib.pyplot as plt
 import random
 
-fig, axes = plt.subplots(7, 5, figsize=(15, 15))
+fig, axes = plt.subplots(9, 5, figsize=(15, 15))
 
 random_image = random.sample(range(decoded_imgs_01.shape[0]), 5)
 outputs = [x_test, decoded_imgs_01,decoded_imgs_08,

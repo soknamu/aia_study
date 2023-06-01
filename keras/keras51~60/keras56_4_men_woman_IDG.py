@@ -2,8 +2,8 @@ import numpy as np
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from sklearn.model_selection import train_test_split
 import time
-path = 'd:/study_data/_data/men_women/'
-save_path = 'd:study_data/_save/men_women/'
+path = 'c:/study_data/_data/men_women/'
+save_path = 'c:study_data/_save/men_women/'
 datagen = ImageDataGenerator(rescale= 1./255)
 
 start = time.time()
