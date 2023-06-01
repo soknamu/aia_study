@@ -33,9 +33,9 @@ def autoencoder(hidden_layer_size):
     
     return model
 
-# model = autoencoder(hidden_layer_size=154) #pca 95% 성능
+model = autoencoder(hidden_layer_size=154) #pca 95% 성능
 # model = autoencoder(hidden_layer_size=331) #pca 99% 성능
-model = autoencoder(hidden_layer_size=486) #pca 99.9% 성능
+# model = autoencoder(hidden_layer_size=486) #pca 99.9% 성능
 # model = autoencoder(hidden_layer_size=713) #pca 100% 성능
  
 model.compile(optimizer= 'adam', loss = 'mse')
@@ -43,7 +43,7 @@ model.compile(optimizer= 'adam', loss = 'mse')
 model.fit(x_train_noised, x_train, epochs = 30, batch_size= 128)
 
 #4. 평가, 예측
-decoded_imgs = np.round(model.predict(x_test_noised))
+decoded_imgs = model.predict(x_test_noised)
 
 import matplotlib.pyplot as plt
 n =10
