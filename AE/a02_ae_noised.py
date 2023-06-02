@@ -19,7 +19,7 @@ x_test_noised = x_test + np.random.normal(0, 0.1, size= x_test.shape)
 # 평균이 0이고 표준 편차가 0.1인 정규 분포에서 크기가 x_train.shape인 샘플을 생성하는 함수이기때문에
 #random을 쓰지말고 uniform으로 써야됨.
 
-x_train_noised = np.clip(x_train_noised, a_min=0, a_max=1) #0보다 작으면 0, 1보다 크면 1
+x_train_noised = np.clip(x_train_noised, a_min=0, a_max=1) #0보다 작으면 0, 1보다 크면 1 즉 0~1사이로 제한한다.
 x_test_noised = np.clip(x_test_noised, a_min=0, a_max=1)
  
 # print(np.max(x_train_noised), np.min(x_train_noised)) #1.0 0.0
