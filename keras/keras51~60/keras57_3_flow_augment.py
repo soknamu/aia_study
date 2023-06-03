@@ -91,3 +91,5 @@ print(x_train.shape)
 print(y_train.shape)
 
 print(np.max(x_train), np.min(x_train)) #1.0 0.0
+
+#복습.
