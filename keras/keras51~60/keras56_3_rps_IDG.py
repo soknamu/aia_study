@@ -34,3 +34,4 @@ np.save(save_path + 'keras56_rps_y_train.npy', arr = rps_y_train)
 np.save(save_path + 'keras56_rps_y_test.npy', arr = rps_y_test)
 
 #maxpooling 과적합방지.
+#복습
