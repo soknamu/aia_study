@@ -162,3 +162,5 @@ hyundai_x_predict = hyundai_x_predict.reshape(1, timesteps, 14)
 predict_result = model.predict([samsung_x_predict, hyundai_x_predict])
 
 print("내일의 종가는 바로바로 : ", np.round(predict_result[0], 2))
+
+#시계열 복습
