@@ -45,3 +45,4 @@ results = model.evaluate(x_test, y_test)
 
 print("lr:", learning_rate, "loss:", results)
 
+#ReduceLR 복습
