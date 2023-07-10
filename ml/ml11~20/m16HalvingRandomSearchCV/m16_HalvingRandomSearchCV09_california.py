@@ -57,7 +57,7 @@ print('r2_score :', r2_score(y_test,y_predict))
 y_predict_best = model.best_estimator_.predict(x_test)
 print('최적 튠 ACC :', r2_score(y_test,y_predict_best))
 
-print(f'runtime : {np.round(time.time()-start,4)}')
+print(f'runtime : {np.round(time.time()-start,4)}','초')
 
 # 최적의 매개변수 :  RandomForestRegressor(max_depth=10)
 # 최적의 파라미터 :  {'max_depth': 10}

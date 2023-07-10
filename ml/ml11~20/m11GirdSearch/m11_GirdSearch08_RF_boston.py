@@ -3,7 +3,7 @@ from sklearn.datasets import load_digits
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import StratifiedKFold
 from sklearn.metrics import r2_score
-from sklearn.svm import SVC
+from sklearn.svm import SVC,SVR
 from sklearn.model_selection import GridSearchCV
 import time
 import random

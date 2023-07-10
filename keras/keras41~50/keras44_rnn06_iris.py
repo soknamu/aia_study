@@ -121,3 +121,6 @@ print('accuracy score : ', acc)
 # loss :  0.0014884460251778364
 # acc :  1.0
 # accuracy score :  1.0
+
+
+#rnn 복습
